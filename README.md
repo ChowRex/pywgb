@@ -23,7 +23,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 4. Refer code below:
 
    ```python
-   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot
+   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot, NewsWeComGroupBot, FileWeComGroupBot
    
    KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
    
@@ -54,6 +54,12 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    ]
    bot = NewsWeComGroupBot(KEY)
    bot.send(articles=articles)
+   
+   # If you want to send File message, use this.
+   file = "Path/To/Your/File.suffix"
+   bot = FileWeComGroupBot(KEY)
+   bot.send(file_path=file)
+   
    ```
 
 ## Official Docs
@@ -72,7 +78,9 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 
   Move bots into a new module: `bot`
 
-- [ ] v0.0.4: 📂 Add `File` type message support.
+- [x] v0.0.4: 📂 Add `File` type message support;
+
+    Refactor `bot` module
 
 - [ ] v0.0.5: 🗣️ Add `Voice` type message support.
 

@@ -11,10 +11,14 @@ from .bot.text import TextWeComGroupBot
 from .bot.markdown import MarkdownWeComGroupBot
 from .bot.image import ImageWeComGroupBot
 from .bot.news import NewsWeComGroupBot
+from .bot.file import FileWeComGroupBot
+from .bot import MediaUploader
 
 __all__ = [
     "TextWeComGroupBot",
     "MarkdownWeComGroupBot",
     "ImageWeComGroupBot",
     "NewsWeComGroupBot",
+    "FileWeComGroupBot",
+    "MediaUploader",
 ]

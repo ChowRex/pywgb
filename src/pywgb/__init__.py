@@ -20,3 +20,4 @@ from .utils import TextWeComGroupBot
 from .utils import MarkdownWeComGroupBot
 from .utils import ImageWeComGroupBot
 from .utils import NewsWeComGroupBot
+from .utils import FileWeComGroupBot

@@ -20,6 +20,8 @@ from src.pywgb.utils import ImageWeComGroupBot
 from src.pywgb.utils import MarkdownWeComGroupBot
 from src.pywgb.utils import NewsWeComGroupBot
 from src.pywgb.utils import TextWeComGroupBot
+from src.pywgb.utils import FileWeComGroupBot
+from src.pywgb.utils import MediaUploader
 
 env_file = Path(__file__).parent.with_name(".env")
 load_dotenv(env_file, override=True)
@@ -85,7 +87,7 @@ def test_image_initial() -> None:
     assert VALID_KEY == bot.key
 
 
-def test_new_initial() -> None:
+def test_news_initial() -> None:
     """
     Test NewsWeComGroupBot initialisation.
     :return:
@@ -94,6 +96,20 @@ def test_new_initial() -> None:
     bot = NewsWeComGroupBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
+
+
+def test_file_initial() -> None:
+    """
+    Test NewsWeComGroupBot initialisation.
+    :return:
+    """
+    # Verify valid key and url
+    bot = FileWeComGroupBot(VALID_KEY)
+    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert VALID_KEY == bot.key
+    uploader = MediaUploader(VALID_KEY)
+    assert urlparse(unquote(uploader.doc)).fragment == uploader._doc_key  # pylint: disable=protected-access
+    assert VALID_KEY == uploader.key
 
 
 def test_successful_send() -> None:
@@ -119,6 +135,11 @@ def test_successful_send() -> None:
     bot = NewsWeComGroupBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(articles=TEST_VALID_ARTICLES)
+    print(result)
+    assert result["errcode"] == 0
+    bot = FileWeComGroupBot(getenv("VALID_KEY"))
+    print(bot)
+    result = bot.send(file_path=Path(__file__).with_name("test.png"))
     print(result)
     assert result["errcode"] == 0
 
@@ -189,3 +210,15 @@ def test_wrong_articles() -> None:
         with raises(ValueError) as exception_info:
             bot.send(articles=TEST_VALID_ARTICLES, test=code)
         assert msg in str(exception_info.value)
+
+
+def test_wrong_file() -> None:
+    """
+    Test wrong file
+    :return:
+    """
+    bot = FileWeComGroupBot(getenv("VALID_KEY"))
+    # Test empty articles
+    with raises(ValueError) as exception_info:
+        bot.send(file_path=None)
+    assert "file_path must be provided" in str(exception_info.value)

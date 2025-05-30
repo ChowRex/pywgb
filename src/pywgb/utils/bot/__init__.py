@@ -7,13 +7,14 @@ Abstract classes
 - Created Time: 2025/5/27 13:54
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
-__all__ = ["AbstractWeComGroupBot", "FilePathLike"]
+__all__ = ["AbstractWeComGroupBot", "FilePathLike", "MediaUploader"]
 
 from abc import ABC, abstractmethod
 from logging import getLogger
 from os import PathLike
+from pathlib import Path
 from typing import Union
-from urllib.parse import quote, urlparse, parse_qs
+from urllib.parse import quote, urlparse, parse_qs, urljoin
 from uuid import UUID
 
 from requests import Session, session
@@ -24,17 +25,13 @@ logger = getLogger(__name__)
 FilePathLike = Union[str, PathLike]
 
 
-class AbstractWeComGroupBot(ABC):
-    """Abstract class of Wecom group bot."""
+class _BotBasic(ABC):
+    """Private bot basic class"""
 
     # The base path of the document
-    _DOC_URL: str = "https://developer.work.weixin.qq.com/document/path/91770"
-    # API Endpoint
-    _API_END_POINT: str = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send'
-    # Default requests headers
-    _HEADERS: dict = {"Content-Type": "application/json"}
-    # Class level variable for detect overheat
-    OVERHEAT: int = -1
+    _DOC_URL: str = "https://developer.work.weixin.qq.com/document/path/99110"
+    # API Endpoint base url
+    _API_END_POINT: str = 'https://qyapi.weixin.qq.com'
 
     def __init__(self, key: str) -> None:
         """
@@ -45,7 +42,6 @@ class AbstractWeComGroupBot(ABC):
             raise ValueError("Key is required")
         self.key = self._verify_uuid(key.strip())
         self.session: Session = session()
-        self.session.headers = self._HEADERS
 
     @staticmethod
     def _parse_webhook_url(url: str) -> str:
@@ -97,21 +93,29 @@ class AbstractWeComGroupBot(ABC):
         return f"{self.__class__.__name__}({self.key})"
 
     @property
+    def api_end_point(self) -> str:
+        """
+        Returns the address of the spliced endpoint url.
+        :return: Endpoint url
+        """
+        end_point = urljoin(self._API_END_POINT, self._api_end_point_path)
+        return end_point
+
+    @property
+    @abstractmethod
+    def _api_end_point_path(self) -> str:
+        """
+        The path of the API Endpoint.
+        :return: path of the API Endpoint.
+        """
+
+    @property
     @abstractmethod
     def _doc_key(self) -> str:
         """
         The key of the document description.
         :return: key of the document description
         """
-
-    @property
-    def api_end_point(self) -> str:
-        """
-        Returns the address of the spliced endpoint url.
-        :return: Endpoint url
-        """
-        end_point = f"{self._API_END_POINT}?key={self.key}"
-        return end_point
 
     @property
     def doc(self) -> str:
@@ -121,6 +125,36 @@ class AbstractWeComGroupBot(ABC):
         """
         url = f"{self._DOC_URL}#{quote(self._doc_key)}"
         return url
+
+
+class AbstractWeComGroupBot(_BotBasic, ABC):
+    """Abstract class of Wecom group bot."""
+
+    # Default requests headers
+    _HEADERS: dict = {"Content-Type": "application/json"}
+    # Class level variable for detect overheat
+    OVERHEAT: int = -1
+
+    def __init__(self, key: str) -> None:
+        _BotBasic.__init__(self, key)
+        ABC.__init__(self)
+        self.session.headers = self._HEADERS
+
+    @property
+    def _api_end_point_path(self) -> str:
+        """
+        The path of the API Endpoint.
+        :return: path of the API Endpoint.
+        """
+        return "cgi-bin/webhook/send"
+
+    @property
+    @abstractmethod
+    def _doc_key(self) -> str:
+        """
+        The key of the document description.
+        :return: key of the document description
+        """
 
     # pylint:disable=unused-argument
     @handle_request_exception
@@ -144,7 +178,10 @@ class AbstractWeComGroupBot(ABC):
         logger.debug("Message: %s", msg)
         logger.debug("File path: %s", file_path)
         logger.debug("Other kwargs: %s", kwargs)
-        response = self.session.post(self.api_end_point, json=msg)
+        logger.debug("API endpoint URL: %s", self.api_end_point)
+        response = self.session.post(self.api_end_point,
+                                     params={"key": self.key},
+                                     json=msg)
         result = response.json()
         logger.debug("~~~~ %s ~~~~", self.send.__name__)
         logger.info("Message has been sent: %s", result)
@@ -163,3 +200,52 @@ class AbstractWeComGroupBot(ABC):
         :param kwargs: Other keyword arguments.
         :return: Result dict.
         """
+
+
+class MediaUploader(_BotBasic):
+    """Upload voice and file class"""
+
+    @property
+    def _api_end_point_path(self) -> str:
+        """
+        The path of the API Endpoint.
+        :return: path of the API Endpoint.
+        """
+        return "cgi-bin/webhook/upload_media"
+
+    @property
+    def _doc_key(self) -> str:
+        """
+        The key of the document description.
+        :return: key of the document description
+        """
+        return "文件上传接口"
+
+    @handle_request_exception
+    def upload(self, /, file_path: FilePathLike = None, **kwargs) -> dict:
+        """
+        Upload voice and file.
+        :param file_path: The path of the file.
+        :param kwargs: Other keyword arguments.
+        :return: Result dict.
+        """
+        if file_path is None:
+            raise ValueError("file_path must be provided")
+        file_path: Path = Path(file_path)
+        # Only support `AMR` format for voice, others must be file type
+        file_type: str = "voice" if file_path.suffix == ".amr" else "file"
+        logger.debug("~~~~ %s ~~~~", self.upload.__name__)
+        logger.debug("File path: %s", file_path)
+        logger.debug("Other kwargs: %s", kwargs)
+        logger.debug("API endpoint URL: %s", self.api_end_point)
+        with open(file_path, "rb") as files:
+            response = self.session.post(self.api_end_point,
+                                         params={
+                                             "key": self.key,
+                                             "type": file_type
+                                         },
+                                         files={"media": files})
+        result = response.json()
+        logger.debug("~~~~ %s ~~~~", self.upload.__name__)
+        logger.info("%s has been uploaded: %s", file_type.capitalize(), result)
+        return result

@@ -68,21 +68,22 @@ def detect_overheat(function):
         logger.debug("==== %s ====", detect_overheat.__name__)
         logger.debug("Positional arguments: %s", args)
         logger.debug("Other kwargs: %s", kwargs)
-        if self.OVERHEAT >= 0:
-            logger.warning("Overheat detected.")
-            while self.OVERHEAT >= 0:
-                print(f"\rCooling down: {self.OVERHEAT:02d}s",
-                      end='',
-                      flush=True)
-                sleep(1)
-                self.OVERHEAT -= 1
-            print()
-        result = function(self, *args, **kwargs)
-        threshold = overheat_threshold
         if kwargs.get("test") == "overheat":
-            threshold = 1
             kwargs.pop("test")
-            result["errcode"] = overheat_error_code
+            threshold = 0
+            result = {"errcode": overheat_error_code}
+        else:
+            threshold = overheat_threshold
+            if self.OVERHEAT >= 0:
+                logger.warning("Overheat detected.")
+                while self.OVERHEAT >= 0:
+                    print(f"\rCooling down: {self.OVERHEAT:02d}s",
+                          end='',
+                          flush=True)
+                    sleep(1)
+                    self.OVERHEAT -= 1
+                print()
+            result = function(self, *args, **kwargs)
         if result.get("errcode") == overheat_error_code:
             self.OVERHEAT = threshold
             result = wrapper(self, *args, **kwargs)
