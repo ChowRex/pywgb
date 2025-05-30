@@ -9,7 +9,7 @@ Markdown type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from .abstract import AbstractWeComGroupBot, FilePathLike
+from . import AbstractWeComGroupBot, FilePathLike
 
 
 class MarkdownWeComGroupBot(AbstractWeComGroupBot):

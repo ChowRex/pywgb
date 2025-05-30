@@ -34,11 +34,7 @@ def verify_and_convert_data(function):
         """
         logger.debug("---- %s ----", verify_and_convert_data.__name__)
         logger.debug("Positional arguments: %s", args)
-        # logger.debug("Other kwargs: %s", kwargs)
-        if len(args) != 1:
-            args = ("",)
-            if not kwargs.get("file_path"):  # pragma: no cover
-                raise ValueError("Either msg or file_path should be provided")
+        logger.debug("Other kwargs: %s", kwargs)
         data = self.prepare_data(*args, **kwargs)
         msg = None if "msg" not in data else data.pop("msg")
         file_path = None if "file_path" not in data else data.pop("file_path")
@@ -71,7 +67,7 @@ def detect_overheat(function):
         """
         logger.debug("==== %s ====", detect_overheat.__name__)
         logger.debug("Positional arguments: %s", args)
-        # logger.debug("Other kwargs: %s", kwargs)
+        logger.debug("Other kwargs: %s", kwargs)
         if self.OVERHEAT >= 0:
             logger.warning("Overheat detected.")
             while self.OVERHEAT >= 0:
@@ -114,13 +110,14 @@ def handle_request_exception(function):
         """
         logger.debug("#### %s ####", handle_request_exception.__name__)
         logger.debug("Positional arguments: %s", args)
-        # logger.debug("Other kwargs: %s", kwargs)
+        logger.debug("Other kwargs: %s", kwargs)
         try:
-            result = function(self, *args, **kwargs)
-            if (test := kwargs.get("test")) == "api_error":
-                result["errcode"] = -1
-            elif test == "request_error":
+            if (test := kwargs.get("test")) == "request_error":
                 raise RequestException
+            if test == "api_error":
+                result = {"errcode": -1}
+            else:
+                result = function(self, *args, **kwargs)
             if result.get("errcode") != 0:
                 msg = f"Request failed, please refer to the official manual: {self.doc}"
                 logger.error(msg)

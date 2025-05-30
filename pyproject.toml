@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pywgb"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
     { name="Rex Zhou", email="879582094@qq.com" },
 ]

@@ -11,7 +11,7 @@ from base64 import b64encode
 from hashlib import md5
 from pathlib import Path
 
-from .abstract import AbstractWeComGroupBot, FilePathLike
+from . import AbstractWeComGroupBot, FilePathLike
 
 
 class ImageWeComGroupBot(AbstractWeComGroupBot):
@@ -45,7 +45,6 @@ class ImageWeComGroupBot(AbstractWeComGroupBot):
         # Check image size, only smaller than `2M`
         max_size = 2 * pow(1024, 2)
         if len(content) > max_size or kwargs.get("test") == "oversize_image":
-            # pragma: no cover
             raise BufferError("The image is too large, more than 2M")
         result = {
             "msg": {

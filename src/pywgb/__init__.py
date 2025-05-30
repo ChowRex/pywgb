@@ -19,3 +19,4 @@ __email__ = '879582094@qq.com'
 from .utils import TextWeComGroupBot
 from .utils import MarkdownWeComGroupBot
 from .utils import ImageWeComGroupBot
+from .utils import NewsWeComGroupBot

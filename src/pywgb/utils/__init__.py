@@ -7,12 +7,14 @@ Utilities
 - Created Time: 2025/5/27 13:53
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
-from .text import TextWeComGroupBot
-from .markdown import MarkdownWeComGroupBot
-from .image import ImageWeComGroupBot
+from .bot.text import TextWeComGroupBot
+from .bot.markdown import MarkdownWeComGroupBot
+from .bot.image import ImageWeComGroupBot
+from .bot.news import NewsWeComGroupBot
 
 __all__ = [
     "TextWeComGroupBot",
     "MarkdownWeComGroupBot",
     "ImageWeComGroupBot",
+    "NewsWeComGroupBot",
 ]

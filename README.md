@@ -8,12 +8,18 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 ## How to use
 
 1. Create a [Wecom Group Bot](https://qinglian.tencent.com/help/docs/2YhR-6/).
+
 2. Copy the webhook URL or just the `key`. It should be like:
 
    - `Webhook`: *https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=UUID*
    - `Key`: *UUID*
 
-3. Install this package: `pip install pywgb`
+3. Install this package: 
+
+    ```bash
+    pip install -U pywgb
+    ```
+
 4. Refer code below:
 
    ```python
@@ -35,6 +41,19 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    file = "Path/To/Your/Image.png" or "Path/To/Your/Image.jpg"
    bot = ImageWeComGroupBot(KEY)
    bot.send(file_path=file)
+   
+   # If you want to send News message, use this.
+   articles = [
+       {
+           "title": "This is a test news",
+           "description": "You can add description here",
+           "url":  # Here is the link of picture
+               "www.tencent.com",
+           "picurl": "https://www.tencent.com/img/index/tencent_logo.png"
+       },
+   ]
+   bot = NewsWeComGroupBot(KEY)
+   bot.send(articles=articles)
    ```
 
 ## Official Docs
@@ -43,21 +62,23 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 
 ## Roadmap
 
-- [x] v0.0.1: :tada: Initial project. Offering send Text and Markdown type message.
+- [x] v0.0.1: 🎉 Initial project. Offering send Text and Markdown type message.
 
-- [x] v0.0.2: :framed_picture: Add `Image` type message support;
+- [x] v0.0.2: 🖼️ Add `Image` type message support;
   
   Add overheat detect function and unified exception handling
   
-- [ ] v0.0.3: :newspaper: Add `News` type message support.
+- [x] v0.0.3: 📰 Add `News` type message support;
 
-- [ ] v0.0.4: :open_file_folder: Add `File` type message support.
+  Move bots into a new module: `bot`
 
-- [ ] v0.0.5: :speaking_head: Add `Voice` type message support.
+- [ ] v0.0.4: 📂 Add `File` type message support.
 
-- [ ] v0.0.6: :spiral_notepad: Add `TextCard` type message support.
+- [ ] v0.0.5: 🗣️ Add `Voice` type message support.
 
-- [ ] v0.0.7: :card_file_box: Add `PictureCard` type message support.
+- [ ] v0.0.6: 🗒️ Add `TextCard` type message support.
 
-- [ ] v0.1.0: :thumbsup: First FULL capacity stable version release.Fix bugs and so on.
+- [ ] v0.0.7: 🗃️ Add `PictureCard` type message support.
+
+- [ ] v0.1.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 
