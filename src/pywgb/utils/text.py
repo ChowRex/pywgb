@@ -8,7 +8,7 @@ Text type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from .abstract import AbstractWeComGroupBot
+from .abstract import AbstractWeComGroupBot, FilePathLike
 
 
 class TextWeComGroupBot(AbstractWeComGroupBot):
@@ -18,23 +18,29 @@ class TextWeComGroupBot(AbstractWeComGroupBot):
     def _doc_key(self) -> str:
         return "文本类型"
 
-    def convert_msg(self, msg: str, /, **kwargs) -> dict:
+    def prepare_data(
+            self,
+            msg: str = None,
+            /,
+            file_path: FilePathLike = None,  # pylint: disable=unused-argument
+            **kwargs) -> dict:
         """
-        Convert the message to text format.
+        Convert the message to text format data.
         :param msg: Message to convert.
+        :param file_path: File path.
         :param kwargs: Other keyword arguments.
-        :return: Converted message.
+        :return: Converted data.
         """
         mentioned_list: list = kwargs.get("mentioned_list", [])
         mentioned_mobile_list: list = kwargs.get("mentioned_mobile_list", [])
         result = {
-            "msgtype": "text",
-            "text": {
-                "content": msg.strip(),
-                "mentioned_list": mentioned_list,
-                "mentioned_mobile_list": mentioned_mobile_list
+            "msg": {
+                "msgtype": "text",
+                "text": {
+                    "content": msg.strip(),
+                    "mentioned_list": mentioned_list,
+                    "mentioned_mobile_list": mentioned_mobile_list
+                }
             }
         }
-        if kwargs.get("test"):
-            result = {"msgtype": "text"}
         return result

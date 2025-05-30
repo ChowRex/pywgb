@@ -7,19 +7,21 @@ Abstract classes
 - Created Time: 2025/5/27 13:54
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
-__all__ = ["AbstractWeComGroupBot"]
+__all__ = ["AbstractWeComGroupBot", "FilePathLike"]
 
 from abc import ABC, abstractmethod
-from functools import wraps
-from json import loads, JSONDecodeError
 from logging import getLogger
+from os import PathLike
+from typing import Union
 from urllib.parse import quote, urlparse, parse_qs
 from uuid import UUID
-from typing import Union
 
-from requests import Session, session, RequestException
+from requests import Session, session
+
+from .deco import verify_and_convert_data, detect_overheat, handle_request_exception
 
 logger = getLogger(__name__)
+FilePathLike = Union[str, PathLike]
 
 
 class AbstractWeComGroupBot(ABC):
@@ -31,6 +33,8 @@ class AbstractWeComGroupBot(ABC):
     _API_END_POINT: str = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send'
     # Default requests headers
     _HEADERS: dict = {"Content-Type": "application/json"}
+    # Class level variable for detect overheat
+    OVERHEAT: int = -1
 
     def __init__(self, key: str) -> None:
         """
@@ -118,71 +122,44 @@ class AbstractWeComGroupBot(ABC):
         url = f"{self._DOC_URL}#{quote(self._doc_key)}"
         return url
 
-    @staticmethod
-    def _valid_and_convert_message(function):
-        """
-        Verify the data and convert the message to standard format.
-        :param function: Callable object.
-        :return: Result dict.
-        """
-
-        @wraps(function)
-        def wrapper(self, msg: str, **kwargs) -> dict:
-            """
-            Verify the data and convert the message to standard format.
-            :param self: Object instance.
-            :param msg: Message body.
-            :param kwargs: Other keyword arguments.
-            :return: Result dict.
-            """
-            data = self.convert_msg(msg, **kwargs)
-            if isinstance(data, (str, bytes)):  # pragma: no cover
-                try:
-                    data = loads(data)
-                except JSONDecodeError as error:
-                    msg = f"Error parsing JSON string: {error}"
-                    logger.error(msg)
-                    raise ValueError(msg) from error
-            if not isinstance(data, dict):  # pragma: no cover
-                msg = "The data structure passed is incorrect. Please check the input information"
-                logger.error(msg)
-                raise SyntaxError(msg)
-            return function(self, data, **kwargs)
-
-        return wrapper
-
-    @_valid_and_convert_message
-    def send(self, msg: str, /, **kwargs) -> dict:  # pylint:disable=unused-argument
+    # pylint:disable=unused-argument
+    @handle_request_exception
+    @detect_overheat
+    @verify_and_convert_data
+    def send(self,
+             msg: str = None,
+             /,
+             file_path: FilePathLike = None,
+             **kwargs) -> dict:
         """
         Method of sending a message. `Refer`_
 
         .. _`Refer`: https://developer.work.weixin.qq.com/document/path/91770
 
         :param msg: Message body.
+        :param file_path: File path. Used for send image/voice/file.
         :return: Result dict.
         """
-        logger.debug("Request parameters")
-        logger.debug(msg)
-        try:
-            response = self.session.post(self.api_end_point, json=msg)
-            result = response.json()
-            if response.status_code != 200 or result.get("errcode") != 0:
-                msg = f"Request failed, please refer to the official manual: {self.doc}"
-                logger.error(msg)
-                logger.error("Error message: %s", result)
-                raise IOError(msg)
-        except RequestException as error:  # pragma: no cover
-            msg = f"Unable to initiate API request correctly: {error}"
-            logger.error(msg)
-            raise ConnectionRefusedError(msg) from error
+        logger.debug("~~~~ %s ~~~~", self.send.__name__)
+        logger.debug("Message: %s", msg)
+        logger.debug("File path: %s", file_path)
+        logger.debug("Other kwargs: %s", kwargs)
+        response = self.session.post(self.api_end_point, json=msg)
+        result = response.json()
+        logger.debug("~~~~ %s ~~~~", self.send.__name__)
         logger.info("Message has been sent: %s", result)
         return result
 
     @abstractmethod
-    def convert_msg(self, msg: str, /, **kwargs) -> dict:
+    def prepare_data(self,
+                     msg: str = None,
+                     /,
+                     file_path: FilePathLike = None,
+                     **kwargs) -> dict:
         """
         Prepare data methods, subclasses must complete specific implementations
         :param msg: Message body.
+        :param file_path: File path.
         :param kwargs: Other keyword arguments.
         :return: Result dict.
         """

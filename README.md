@@ -17,7 +17,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 4. Refer code below:
 
    ```python
-   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot
+   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot
    
    KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
    
@@ -31,6 +31,10 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    bot = MarkdownWeComGroupBot(KEY)
    bot.send(msg)
    
+   # If you want to send Image message, use this.
+   file = "Path/To/Your/Image.png" or "Path/To/Your/Image.jpg"
+   bot = ImageWeComGroupBot(KEY)
+   bot.send(file_path=file)
    ```
 
 ## Official Docs
@@ -40,11 +44,20 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 ## Roadmap
 
 - [x] v0.0.1: :tada: Initial project. Offering send Text and Markdown type message.
-- [ ] v0.0.2: :framed_picture: Add `Picture` type message support.
+
+- [x] v0.0.2: :framed_picture: Add `Image` type message support;
+  
+  Add overheat detect function and unified exception handling
+  
 - [ ] v0.0.3: :newspaper: Add `News` type message support.
+
 - [ ] v0.0.4: :open_file_folder: Add `File` type message support.
+
 - [ ] v0.0.5: :speaking_head: Add `Voice` type message support.
+
 - [ ] v0.0.6: :spiral_notepad: Add `TextCard` type message support.
+
 - [ ] v0.0.7: :card_file_box: Add `PictureCard` type message support.
+
 - [ ] v0.1.0: :thumbsup: First FULL capacity stable version release.Fix bugs and so on.
 

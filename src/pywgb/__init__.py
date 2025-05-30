@@ -16,5 +16,6 @@ __license__ = "MIT"
 __maintainer__ = __author__
 __email__ = '879582094@qq.com'
 
-from .utils.text import TextWeComGroupBot
-from .utils.markdown import MarkdownWeComGroupBot
+from .utils import TextWeComGroupBot
+from .utils import MarkdownWeComGroupBot
+from .utils import ImageWeComGroupBot

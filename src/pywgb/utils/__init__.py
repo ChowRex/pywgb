@@ -9,8 +9,10 @@ Utilities
 """
 from .text import TextWeComGroupBot
 from .markdown import MarkdownWeComGroupBot
+from .image import ImageWeComGroupBot
 
 __all__ = [
     "TextWeComGroupBot",
     "MarkdownWeComGroupBot",
+    "ImageWeComGroupBot",
 ]
