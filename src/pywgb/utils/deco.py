@@ -9,6 +9,7 @@ Decorators module
 """
 from functools import wraps
 from logging import getLogger
+from pathlib import Path
 from time import sleep
 
 from requests import RequestException
@@ -16,33 +17,32 @@ from requests import RequestException
 logger = getLogger(__name__)
 
 
-def verify_and_convert_data(function):
+def verify_and_convert_arguments(function):
     """
-    Verify the data and convert the message to standard format.
+    Verify and convert the arguments to standard format.
     :param function: Callable object.
     :return: Result dict.
     """
 
     @wraps(function)
     def wrapper(self, *args, **kwargs) -> dict:
-        """
-        Verify the data and convert the message to standard format.
-        :param self: Object instance.
-        :param args: Positional arguments.
-        :param kwargs: Other keyword arguments.
-        :return: Result dict.
-        """
-        logger.debug("---- %s ----", verify_and_convert_data.__name__)
+        logger.debug("---- %s ----", verify_and_convert_arguments.__name__)
         logger.debug("Positional arguments: %s", args)
         logger.debug("Other kwargs: %s", kwargs)
-        data = self.prepare_data(*args, **kwargs)
-        msg = None if "msg" not in data else data.pop("msg")
-        file_path = None if "file_path" not in data else data.pop("file_path")
-        logger.debug("Converted message: %s", msg)
-        logger.debug("Converted file path: %s", file_path)
-        logger.debug("Converted other kwargs: %s", data)
-        logger.debug("---- %s ----", verify_and_convert_data.__name__)
-        return function(self, msg, file_path=file_path, **data)
+        try:
+            self.verify_arguments(*args, **kwargs)
+        except ValueError as error:
+            logger.critical("Verification of arguments failed: %s", error)
+            raise error
+        try:
+            args, kwargs = self.convert_arguments(*args, **kwargs)
+        except ValueError as error:
+            logger.critical("Convertion of arguments failed: %s", error)
+            raise error
+        logger.debug("Converted arguments: %s", args)
+        logger.debug("Converted other kwargs: %s", kwargs)
+        logger.debug("---- %s ----", verify_and_convert_arguments.__name__)
+        return function(self, *args, **kwargs)
 
     return wrapper
 
@@ -130,5 +130,30 @@ def handle_request_exception(function):
             raise ConnectionRefusedError(msg) from error
         logger.debug("#### %s ####", handle_request_exception.__name__)
         return result
+
+    return wrapper
+
+
+def verify_file(function):
+    """
+    Verify file, include: amr / png / jpg or other type files.
+    :param function: Callable function.
+    :return:
+    """
+
+    @wraps(function)
+    def wrapper(self, *args, **kwargs):
+        logger.debug("$$$$ %s $$$$", verify_file.__name__)
+        logger.debug("Positional arguments: %s", args)
+        logger.debug("Other kwargs: %s", kwargs)
+        file_path = kwargs.get("file_path")
+        try:
+            file_path = file_path if file_path else args[0]
+        except IndexError as error:
+            raise ValueError("The file_path parameter is required.") from error
+        if not Path(file_path).exists():
+            raise ValueError("The file_path parameter not exists.")
+        logger.debug("$$$$ %s $$$$", verify_file.__name__)
+        return function(self, *args, **kwargs)
 
     return wrapper

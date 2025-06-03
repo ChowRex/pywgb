@@ -11,7 +11,8 @@ from base64 import b64encode
 from hashlib import md5
 from pathlib import Path
 
-from . import AbstractWeComGroupBot, FilePathLike
+from . import AbstractWeComGroupBot, ConvertedData
+from ..deco import verify_file
 
 
 class ImageWeComGroupBot(AbstractWeComGroupBot):
@@ -21,38 +22,40 @@ class ImageWeComGroupBot(AbstractWeComGroupBot):
     def _doc_key(self) -> str:
         return "图片类型"
 
-    def prepare_data(
-            self,
-            msg: str = None,  # pylint:disable=unused-argument
-            /,
-            file_path: FilePathLike = None,
-            **kwargs) -> dict:
+    @verify_file
+    def verify_arguments(self, *args, **kwargs) -> None:
+        """
+        Verify the arguments passed.
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
+        :return:
+        :raise ValueError: Verify error.
+        """
+        suffix = Path(kwargs["file_path"]).suffix.lower()
+        test = kwargs.get("test")
+        # Check format, only support: `.jpg` and `.png`
+        if suffix not in [".jpg", ".png"] or test == "wrong_format_image":
+            raise ValueError("Just support image type: jpg or png")
+
+    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to Image format.
-        :param msg: Message to convert.
-        :param file_path: File path.
+        :param args: Positional arguments.
         :param kwargs: Other keyword arguments.
         :return: Converted message.
         """
-        file_path = Path(file_path) if file_path else None
-        # Check format, only support: `.jpg` and `.png`
-        if file_path.suffix.lower() not in [
-                ".jpg", ".png"
-        ] or kwargs.get("test") == "wrong_format_image":
-            raise TypeError("Just support image type: jpg or png")
-        with open(file_path, "rb") as _:
-            content = _.read()
+        file_path = Path(kwargs["file_path"])
         # Check image size, only smaller than `2M`
         max_size = 2 * pow(1024, 2)
+        with open(file_path, "rb") as _:
+            content = _.read()
         if len(content) > max_size or kwargs.get("test") == "oversize_image":
-            raise BufferError("The image is too large, more than 2M")
-        result = {
-            "msg": {
-                "msgtype": "image",
-                "image": {
-                    "base64": b64encode(content).decode("utf-8"),
-                    "md5": md5(content).hexdigest(),
-                }
+            raise ValueError("The image is too large, more than 2M")
+        result = ({
+            "msgtype": "image",
+            "image": {
+                "base64": b64encode(content).decode("utf-8"),
+                "md5": md5(content).hexdigest(),
             }
-        }
-        return result
+        },)
+        return result, kwargs

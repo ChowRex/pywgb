@@ -13,16 +13,19 @@ from abc import ABC, abstractmethod
 from logging import getLogger
 from os import PathLike
 from pathlib import Path
-from typing import Union
+from typing import Tuple, Dict, Union, List
 from urllib.parse import quote, urlparse, parse_qs, urljoin
 from uuid import UUID
+from functools import partial
 
 from requests import Session, session
 
-from ..deco import verify_and_convert_data, detect_overheat, handle_request_exception
+from ..deco import verify_and_convert_arguments, verify_file
+from ..deco import detect_overheat, handle_request_exception
 
 logger = getLogger(__name__)
 FilePathLike = Union[str, PathLike]
+ConvertedData = Tuple[Tuple[Dict[str, str]], Dict[str, str]]
 
 
 class _BotBasic(ABC):
@@ -159,10 +162,11 @@ class AbstractWeComGroupBot(_BotBasic, ABC):
     # pylint:disable=unused-argument
     @handle_request_exception
     @detect_overheat
-    @verify_and_convert_data
+    @verify_and_convert_arguments
     def send(self,
              msg: str = None,
              /,
+             articles: List[Dict[str, str]] = None,
              file_path: FilePathLike = None,
              **kwargs) -> dict:
         """
@@ -171,11 +175,13 @@ class AbstractWeComGroupBot(_BotBasic, ABC):
         .. _`Refer`: https://developer.work.weixin.qq.com/document/path/91770
 
         :param msg: Message body.
+        :param articles: List of articles. Used for send news.
         :param file_path: File path. Used for send image/voice/file.
         :return: Result dict.
         """
         logger.debug("~~~~ %s ~~~~", self.send.__name__)
         logger.debug("Message: %s", msg)
+        logger.debug("Articles: %s", articles)
         logger.debug("File path: %s", file_path)
         logger.debug("Other kwargs: %s", kwargs)
         logger.debug("API endpoint URL: %s", self.api_end_point)
@@ -188,15 +194,19 @@ class AbstractWeComGroupBot(_BotBasic, ABC):
         return result
 
     @abstractmethod
-    def prepare_data(self,
-                     msg: str = None,
-                     /,
-                     file_path: FilePathLike = None,
-                     **kwargs) -> dict:
+    def verify_arguments(self, *args, **kwargs) -> None:
+        """
+        Verify arguments methods. Subclasses must complete specific implementations
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
+        :return: None
+        """
+
+    @abstractmethod
+    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Prepare data methods, subclasses must complete specific implementations
-        :param msg: Message body.
-        :param file_path: File path.
+        :param args: Positional arguments.
         :param kwargs: Other keyword arguments.
         :return: Result dict.
         """
@@ -222,15 +232,34 @@ class MediaUploader(_BotBasic):
         return "文件上传接口"
 
     @handle_request_exception
-    def upload(self, /, file_path: FilePathLike = None, **kwargs) -> dict:
+    def _upload_temporary_file(self, file_path: Path, file_type: str) -> dict:
+        """
+        Upload temporary file from file path.
+        :param file_path: File path.
+        :param file_type: File type.
+        :return:
+        """
+        kwargs = {
+            "url": self.api_end_point,
+            "params": {
+                "key": self.key,
+                "type": file_type
+            }
+        }
+        cmd = partial(self.session.post, **kwargs)
+        with open(file_path, "rb") as files:
+            response = cmd(files={"media": files})
+        result = response.json()
+        return result
+
+    @verify_file
+    def upload(self, file_path: FilePathLike, /, **kwargs) -> dict:
         """
         Upload voice and file.
         :param file_path: The path of the file.
         :param kwargs: Other keyword arguments.
         :return: Result dict.
         """
-        if file_path is None:
-            raise ValueError("file_path must be provided")
         file_path: Path = Path(file_path)
         # Only support `AMR` format for voice, others must be file type
         file_type: str = "voice" if file_path.suffix == ".amr" else "file"
@@ -238,14 +267,13 @@ class MediaUploader(_BotBasic):
         logger.debug("File path: %s", file_path)
         logger.debug("Other kwargs: %s", kwargs)
         logger.debug("API endpoint URL: %s", self.api_end_point)
-        with open(file_path, "rb") as files:
-            response = self.session.post(self.api_end_point,
-                                         params={
-                                             "key": self.key,
-                                             "type": file_type
-                                         },
-                                         files={"media": files})
-        result = response.json()
+        result = self._upload_temporary_file(file_path, file_type)
         logger.debug("~~~~ %s ~~~~", self.upload.__name__)
         logger.info("%s has been uploaded: %s", file_type.capitalize(), result)
+        result = {
+            "msgtype": file_type,
+            file_type: {
+                "media_id": result["media_id"]
+            }
+        }
         return result

@@ -9,7 +9,7 @@ Markdown type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from . import AbstractWeComGroupBot, FilePathLike
+from . import AbstractWeComGroupBot, ConvertedData
 
 
 class MarkdownWeComGroupBot(AbstractWeComGroupBot):
@@ -19,25 +19,29 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
     def _doc_key(self) -> str:
         return "markdown类型"
 
-    def prepare_data(
-            self,
-            msg: str = None,
-            /,
-            file_path: FilePathLike = None,  # pylint: disable=unused-argument
-            **kwargs) -> dict:
+    def verify_arguments(self, *args, **kwargs) -> None:
+        """
+        Verify the arguments passed.
+        :param args: Positional arguments passed.
+        :param kwargs: Keyword arguments passed.
+        :return:
+        """
+        try:
+            args[0]
+        except IndexError as error:
+            raise ValueError("The msg parameter is required.") from error
+
+    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to Markdown format data.
-        :param msg: Message to convert.
-        :param file_path: File path.
+        :param args: Positional arguments.
         :param kwargs: Other keyword arguments.
         :return: Converted data.
         """
-        result = {
-            "msg": {
-                "msgtype": "markdown",
-                "markdown": {
-                    "content": msg.strip()
-                }
+        result = ({
+            "msgtype": "markdown",
+            "markdown": {
+                "content": args[0].strip()
             }
-        }
-        return result
+        },)
+        return result, kwargs

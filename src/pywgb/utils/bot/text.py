@@ -8,7 +8,7 @@ Text type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from . import AbstractWeComGroupBot, FilePathLike
+from . import AbstractWeComGroupBot, ConvertedData
 
 
 class TextWeComGroupBot(AbstractWeComGroupBot):
@@ -18,29 +18,42 @@ class TextWeComGroupBot(AbstractWeComGroupBot):
     def _doc_key(self) -> str:
         return "文本类型"
 
-    def prepare_data(
-            self,
-            msg: str = None,
-            /,
-            file_path: FilePathLike = None,  # pylint: disable=unused-argument
-            **kwargs) -> dict:
+    def verify_arguments(self, *args, **kwargs) -> None:
+        """
+        Verify the arguments passed.
+        :param args: Positional arguments.
+        :param kwargs: Keyword arguments.
+        :return:
+        """
+        try:
+            args[0]
+        except IndexError as error:
+            raise ValueError("The msg parameter is required.") from error
+        optional_args = ["mentioned_list", "mentioned_mobile_list"]
+        for optional in optional_args:
+            if optional not in kwargs:
+                continue
+            err_msg = f"The {optional} parameter should be a list of strings."
+            if not isinstance(data := kwargs[optional], list):
+                raise ValueError(err_msg)
+            if not all(isinstance(_, str) for _ in data):
+                raise ValueError(err_msg)
+
+    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to text format data.
-        :param msg: Message to convert.
-        :param file_path: File path.
+        :param args: Positional arguments.
         :param kwargs: Other keyword arguments.
         :return: Converted data.
         """
         mentioned_list: list = kwargs.get("mentioned_list", [])
         mentioned_mobile_list: list = kwargs.get("mentioned_mobile_list", [])
-        result = {
-            "msg": {
-                "msgtype": "text",
-                "text": {
-                    "content": msg.strip(),
-                    "mentioned_list": mentioned_list,
-                    "mentioned_mobile_list": mentioned_mobile_list
-                }
+        result = ({
+            "msgtype": "text",
+            "text": {
+                "content": args[0].strip(),
+                "mentioned_list": mentioned_list,
+                "mentioned_mobile_list": mentioned_mobile_list
             }
-        }
-        return result
+        },)
+        return result, kwargs

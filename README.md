@@ -23,7 +23,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 4. Refer code below:
 
    ```python
-   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot, NewsWeComGroupBot, FileWeComGroupBot
+   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot, NewsWeComGroupBot, FileWeComGroupBot, VoiceWeComGroupBot
    
    KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
    
@@ -60,6 +60,11 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    bot = FileWeComGroupBot(KEY)
    bot.send(file_path=file)
    
+   # If you want to send Voice message, use this.
+   file = "Path/To/Your/Voice.amr"  # BE ADVISED: ONLY support amr file
+   bot = VoiceWeComGroupBot(KEY)
+   bot.send(file_path=file)
+   
    ```
 
 ## Official Docs
@@ -68,25 +73,22 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 
 ## Roadmap
 
-- [x] v0.0.1: 🎉 Initial project. Offering send Text and Markdown type message.
-
+- [x] v0.0.1: 🎉 Initial project. Offering send `Text` and `Markdown` type message.
 - [x] v0.0.2: 🖼️ Add `Image` type message support;
   
-  Add overheat detect function and unified exception handling
-  
+  - Add overheat detect function and unified exception handling
 - [x] v0.0.3: 📰 Add `News` type message support;
 
-  Move bots into a new module: `bot`
-
+  - Move bots into a new module: `bot`
 - [x] v0.0.4: 📂 Add `File` type message support;
 
-    Refactor `bot` module
-
-- [ ] v0.0.5: 🗣️ Add `Voice` type message support.
-
+    - Refactor `bot` module
+- [x] v0.0.5: 🗣️ Add `Voice` type message support.
+    - Refactor `deco` module
+    - Add `verify_file` decorator
+    - Introverted parameters check errors
+    - Add more content into README.md
 - [ ] v0.0.6: 🗒️ Add `TextCard` type message support.
-
 - [ ] v0.0.7: 🗃️ Add `PictureCard` type message support.
-
 - [ ] v0.1.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 
