@@ -128,7 +128,10 @@ def test_successful_send() -> None:
     assert result["errcode"] == 0
     bot = MarkdownWeComGroupBot(getenv("VALID_KEY"))
     print(bot)
-    result = bot.send(f"## This is a test Markdown message: {randint(1, 100)}")
+    col = [bot.green, bot.gray, bot.orange]
+    msg = [col[idx % (len(col))](ltr) for idx, ltr in enumerate("colorful")]
+    msg = f"This is a {''.join(msg)} Markdown message"
+    result = bot.send(msg)
     print(result)
     assert result["errcode"] == 0
     bot = ImageWeComGroupBot(getenv("VALID_KEY"))

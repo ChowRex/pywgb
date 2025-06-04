@@ -17,7 +17,10 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 3. Install this package: 
 
     ```bash
+    # Normally use this if you won't send voice message
     pip install -U pywgb
+    # You can install full version by this
+    pip install -U "pywgb[all]"
     ```
 
 4. Refer code below:
@@ -33,8 +36,10 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    bot.send(msg)
    
    # If you want to send Markdown message, use this.
-   msg = "# This is a test Markdown title message."
    bot = MarkdownWeComGroupBot(KEY)
+   col = [bot.green, bot.gray, bot.orange]
+   msg = [col[idx % 3](ltr) for idx, ltr in enumerate("colorful")]
+   msg = f"This is a {''.join(msg)} Markdown message"
    bot.send(msg)
    
    # If you want to send Image message, use this.
@@ -47,8 +52,8 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
        {
            "title": "This is a test news",
            "description": "You can add description here",
-           "url":  # Here is the link of picture
-               "www.tencent.com",
+           "url": "www.tencent.com",
+           # Here is the link of picture
            "picurl": "https://www.tencent.com/img/index/tencent_logo.png"
        },
    ]
@@ -75,7 +80,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 
 - [x] v0.0.1: 🎉 Initial project. Offering send `Text` and `Markdown` type message.
 - [x] v0.0.2: 🖼️ Add `Image` type message support;
-  
+
   - Add overheat detect function and unified exception handling
 - [x] v0.0.3: 📰 Add `News` type message support;
 
@@ -88,7 +93,8 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
     - Add `verify_file` decorator
     - Introverted parameters check errors
     - Add more content into README.md
-- [ ] v0.0.6: 🗒️ Add `TextCard` type message support.
-- [ ] v0.0.7: 🗃️ Add `PictureCard` type message support.
+- [x] v0.0.6: 🩹 Add `Voice` and `File` type size check.
+- [ ] v0.0.7: 🗒️ Add `TextCard` type message support.
+- [ ] v0.0.8: 🗃️ Add `PictureCard` type message support.
 - [ ] v0.1.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 

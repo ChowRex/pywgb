@@ -85,6 +85,9 @@ def test_verify_markdown_error() -> None:
     with raises(ValueError) as error:
         bot.send()
     assert "The msg parameter is required" in str(error.value)
+    with raises(ValueError) as error:
+        bot.color("This will raise an exception", "red")
+    assert "Invalid color" in str(error.value)
 
 
 def test_verify_news_error() -> None:
@@ -154,6 +157,11 @@ def test_verify_file_error() -> None:
     with raises(ValueError) as exception_info:
         bot.send(file_path="234234234.txt")
     assert "The file_path parameter not exists" in str(exception_info.value)
+    # Test oversize file
+    file = Path(__file__).with_name("test.png")
+    with raises(ValueError) as exception_info:
+        bot.send(file_path=file, test="oversize_file")
+    assert "The file size is out of range" in str(exception_info.value)
 
 
 def test_verify_voice_error() -> None:
@@ -171,3 +179,13 @@ def test_verify_voice_error() -> None:
     with raises(ValueError) as exception_info:
         bot.send(file_path=file, test="wrong_format_voice")
     assert "Just support voice type: amr" in str(exception_info.value)
+    # Test overlong and oversize voice
+    file = Path(__file__).with_name("test.amr")
+    tests = {
+        "oversize_voice": "The voice size is out of range",
+        "overlong_voice": "The voice duration is longer than 60s",
+    }
+    for code, msg in tests.items():
+        with raises(ValueError) as exception_info:
+            bot.send(file_path=file, test=code)
+        assert msg in str(exception_info.value)

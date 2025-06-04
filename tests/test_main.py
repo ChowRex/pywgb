@@ -14,8 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # pylint: disable=import-error
-from src.pywgb import VoiceWeComGroupBot
-from src.pywgb.utils import MediaUploader
+from src.pywgb import MarkdownWeComGroupBot
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
 env_file = Path(__file__).parent.with_name(".env")
@@ -38,13 +37,9 @@ def main():  # pragma: no cover
     For unit testing
     :return:
     """
-    bot = VoiceWeComGroupBot(getenv("VALID_KEY"))
-    uploader = MediaUploader(getenv("VALID_KEY"))
+    bot = MarkdownWeComGroupBot(getenv("VALID_KEY"))
     print(bot)
-    file_path = Path(__file__).with_name("test.amr")
-    result = uploader.upload(file_path)
-    print(result)
-    result = bot.send(file_path=file_path)
+    result = bot.orange("test")
     print(result)
 
 
