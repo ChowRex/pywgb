@@ -14,6 +14,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from pytest import raises
+from yaml import safe_load
 
 # pylint: disable=import-error
 from src.pywgb import FileWeComGroupBot
@@ -22,7 +23,8 @@ from src.pywgb import MarkdownWeComGroupBot
 from src.pywgb import NewsWeComGroupBot
 from src.pywgb import TextWeComGroupBot
 from src.pywgb import VoiceWeComGroupBot
-from tests.test_main import env_file, TEST_VALID_ARTICLES
+from src.pywgb import TextCardWeComGroupBot
+from tests.test_main import env_file, errors_file, TEST_VALID_ARTICLES
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
 load_dotenv(env_file, override=True)
@@ -189,3 +191,17 @@ def test_verify_voice_error() -> None:
         with raises(ValueError) as exception_info:
             bot.send(file_path=file, test=code)
         assert msg in str(exception_info.value)
+
+
+def test_verify_text_card_error() -> None:
+    """
+    Test Text Card verification error.
+    :return:
+    """
+    bot = TextCardWeComGroupBot(getenv("VALID_KEY"))
+    with open(errors_file, "r", encoding="utf-8") as _:
+        tests = safe_load(_)
+    for err_msg, kwargs in tests["text"].items():
+        with raises(ValueError) as error:
+            bot.send(**kwargs)
+        assert err_msg in str(error.value)

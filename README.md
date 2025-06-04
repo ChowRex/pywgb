@@ -72,9 +72,57 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    
    ```
 
+5. Send template card messages (***Advanced usage***)
+
+    ```python
+    from pywgb import TextCardWeComGroupBot
+    
+    KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
+    
+    # Prepare the card content
+    kwargs = {
+        "main_title": {
+            "title": "Test message",
+            "desc": "This is a test template text card message"
+        },
+        "emphasis_content": {
+            "title": "100",
+            "desc": "No meaning"
+        },
+        "quote_area": {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+            "title": "Title reference",
+            "quote_text": "Hello\nWorld!"
+        },
+        "sub_title_text": "This is sub-title",
+        "horizontal_content_list": [{
+            "keyname": "Author",
+            "value": "Rex"
+        }, {
+            "keyname": "Google",
+            "value": "Click to go",
+            "type": 1,
+            "url": "https://google.com"
+        }],
+        "jump_list": [{
+            "type": 1,
+            "url": "https://bing.com",
+            "title": "Bing"
+        }],
+        "card_action": {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+        }
+    }
+    bot = TextCardWeComGroupBot(KEY)
+    bot.send(**kwargs)
+    
+    ```
+
 ## Official Docs
 
-> Only Chinese version doc: [群机器人配置说明 - 文档 - 企业微信开发者中心](https://developer.work.weixin.qq.com/document/path/99110)
+> **Only Chinese** doc: [群机器人配置说明 - 文档 - 企业微信开发者中心](https://developer.work.weixin.qq.com/document/path/99110)
 
 ## Roadmap
 
@@ -94,7 +142,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
     - Introverted parameters check errors
     - Add more content into README.md
 - [x] v0.0.6: 🩹 Add `Voice` and `File` type size check.
-- [ ] v0.0.7: 🗒️ Add `TextCard` type message support.
-- [ ] v0.0.8: 🗃️ Add `PictureCard` type message support.
+- [x] v0.0.7: 🗒️ Add `TextCard` type message support.
+- [ ] v0.0.8: 🗃️ Add `NewsCard` type message support.
 - [ ] v0.1.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 

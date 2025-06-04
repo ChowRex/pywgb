@@ -22,3 +22,4 @@ from .utils import ImageWeComGroupBot
 from .utils import NewsWeComGroupBot
 from .utils import FileWeComGroupBot
 from .utils import VoiceWeComGroupBot
+from .utils import TextCardWeComGroupBot

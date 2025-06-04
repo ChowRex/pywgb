@@ -1,0 +1,155 @@
+---
+text:
+  "Either `main_title.title` should be existed":
+    main_title:
+      title: ''
+  "`quote_area.type` is 1, ":
+    main_title:
+      title: 'This is a test'
+    quote_area:
+      type: 1
+      url: ''
+  "`quote_area.type` is 2,":
+    main_title:
+      title: 'This is a test'
+    quote_area:
+      type: 2
+      appid: ''
+  "`horizontal_content_list.keyname` must be existed":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: ""
+        value: "aaa"
+  "`horizontal_content_list.type` is 1,":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: ""
+  "`horizontal_content_list.type` is 2,":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 2
+        media_id: ""
+  "`horizontal_content_list.type` is 3,":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 3
+        userid: ""
+  "`jump_list.title` must be existed":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: "https://cn.bing.com"
+    jump_list:
+      - title: ""
+  "`jump_list.type` is 1, the `jump_list.url`":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: "https://cn.bing.com"
+    jump_list:
+      - title: "Test jump"
+        type: 1
+        url: ""
+  "`jump_list.type` is 2, the `jump_list.appid`":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: "https://cn.bing.com"
+    jump_list:
+      - title: "Test jump"
+        type: 2
+        appid: ""
+  "`card_action` and `card_action.type` must be existed":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: "https://cn.bing.com"
+    jump_list:
+      - title: "Test jump"
+        type: 1
+        url: "https://cn.bing.com"
+    card_action:
+      type: ""
+  "`card_action.type` is 1, the `card_action.url` must be existed":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: "https://cn.bing.com"
+    jump_list:
+      - title: "Test jump"
+        type: 1
+        url: "https://cn.bing.com"
+    card_action:
+      type: 1
+      url: ""
+  "`card_action.type` is 2, the `card_action.appid` must be existed":
+    main_title:
+      title: 'This is a test'
+      quote_area:
+        type: 1
+        url: 'https://cn.bing.com'
+    horizontal_content_list:
+      - keyname: "This is a test content"
+        value: "aaa"
+        type: 1
+        url: "https://cn.bing.com"
+    jump_list:
+      - title: "Test jump"
+        type: 1
+        url: "https://cn.bing.com"
+    card_action:
+      type: 2
+      appid: ""

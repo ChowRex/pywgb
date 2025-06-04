@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pywgb"
-version = "0.0.6"
+version = "0.0.7"
 authors = [
     { name="Rex Zhou", email="879582094@qq.com" },
 ]
@@ -18,12 +18,24 @@ classifiers = [
 requires-python = ">=3.8"
 dependencies = [
     "requests>=2.25.0",
+    "jmespath>=1.0.1",
 ]
 [project.optional-dependencies]
 all = [
     "pydub",
 ]
-
+test = [
+    "pytest",
+    "coverage",
+    "pylint",
+    "python-dotenv",
+    "pydub",
+    "pyyaml",
+]
+build = [
+    "build",
+    "twine",
+]
 
 [project.urls]
 Homepage = "https://github.com/ChowRex/pywgb"
