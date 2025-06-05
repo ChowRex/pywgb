@@ -11,11 +11,11 @@ from base64 import b64encode
 from hashlib import md5
 from pathlib import Path
 
-from . import AbstractWeComGroupBot, ConvertedData
+from . import AbstractBot, ConvertedData
 from ..deco import verify_file
 
 
-class ImageWeComGroupBot(AbstractWeComGroupBot):
+class ImageBot(AbstractBot):
     """Image type message Wecom Group Bot"""
 
     @property
@@ -23,7 +23,7 @@ class ImageWeComGroupBot(AbstractWeComGroupBot):
         return "图片类型"
 
     @verify_file
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments.
@@ -37,7 +37,7 @@ class ImageWeComGroupBot(AbstractWeComGroupBot):
         if suffix not in [".jpg", ".png"] or test == "wrong_format_image":
             raise ValueError("Just support image type: jpg or png")
 
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to Image format.
         :param args: Positional arguments.

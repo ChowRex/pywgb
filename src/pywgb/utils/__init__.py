@@ -7,24 +7,22 @@ Utilities
 - Created Time: 2025/5/27 13:53
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
-from .bot import MediaUploader
-from .bot.text import TextWeComGroupBot
-from .bot.markdown import MarkdownWeComGroupBot
-from .bot.image import ImageWeComGroupBot
-from .bot.news import NewsWeComGroupBot
-from .bot.file import FileWeComGroupBot
-from .bot.voice import VoiceWeComGroupBot
-from .bot.template_card.text import TextCardWeComGroupBot
-from .bot.template_card.news import NewsCardWeComGroupBot
+from .bot.text import TextBot
+from .bot.markdown import MarkdownBot
+from .bot.image import ImageBot
+from .bot.news import NewsBot
+from .bot.file import FileBot
+from .bot.voice import VoiceBot
+from .bot.template_card.text import TextCardBot
+from .bot.template_card.news import NewsCardBot
 
 __all__ = [
-    "MediaUploader",
-    "TextWeComGroupBot",
-    "MarkdownWeComGroupBot",
-    "ImageWeComGroupBot",
-    "NewsWeComGroupBot",
-    "FileWeComGroupBot",
-    "VoiceWeComGroupBot",
-    "TextCardWeComGroupBot",
-    "NewsCardWeComGroupBot",
+    "TextBot",
+    "MarkdownBot",
+    "ImageBot",
+    "NewsBot",
+    "FileBot",
+    "VoiceBot",
+    "TextCardBot",
+    "NewsCardBot",
 ]

@@ -8,17 +8,17 @@ News type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from . import AbstractWeComGroupBot, ConvertedData
+from . import AbstractBot, ConvertedData
 
 
-class NewsWeComGroupBot(AbstractWeComGroupBot):
+class NewsBot(AbstractBot):
     """News type message Wecom Group Bot"""
 
     @property
     def _doc_key(self) -> str:
         return "图文类型"
 
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments.
@@ -46,7 +46,7 @@ class NewsWeComGroupBot(AbstractWeComGroupBot):
                     raise ValueError(msg_)
 
     # pylint:disable=unused-argument
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to News format.
         :param args: Positional arguments.

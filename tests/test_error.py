@@ -17,14 +17,14 @@ from pytest import raises
 from yaml import safe_load
 
 # pylint: disable=import-error
-from src.pywgb import FileWeComGroupBot
-from src.pywgb import ImageWeComGroupBot
-from src.pywgb import MarkdownWeComGroupBot
-from src.pywgb import NewsWeComGroupBot
-from src.pywgb import TextWeComGroupBot
-from src.pywgb import VoiceWeComGroupBot
-from src.pywgb import TextCardWeComGroupBot
-from src.pywgb import NewsCardWeComGroupBot
+from src.pywgb import FileBot
+from src.pywgb import ImageBot
+from src.pywgb import MarkdownBot
+from src.pywgb import NewsBot
+from src.pywgb import TextBot
+from src.pywgb import VoiceBot
+from src.pywgb import TextCardBot
+from src.pywgb import NewsCardBot
 from tests.test_main import env_file, errors_file, TEST_VALID_ARTICLES
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
@@ -36,7 +36,7 @@ def test_overheat() -> None:
     Test overheat function
     :return:
     """
-    bot = TextWeComGroupBot(getenv("VALID_KEY"))
+    bot = TextBot(getenv("VALID_KEY"))
     bot.send("This message was delayed by overheat", test="overheat")
 
 
@@ -45,7 +45,7 @@ def test_request_exception() -> None:
     Test request exception
     :return:
     """
-    bot = TextWeComGroupBot(getenv("VALID_KEY"))
+    bot = TextBot(getenv("VALID_KEY"))
     with raises(ConnectionRefusedError) as exception_info:
         bot.send("This message WON'T be sent, cause by request error",
                  test="request_error")
@@ -63,7 +63,7 @@ def test_verify_text_error() -> None:
     Test TEXT verification error.
     :return:
     """
-    bot = TextWeComGroupBot(getenv("VALID_KEY"))
+    bot = TextBot(getenv("VALID_KEY"))
     with raises(ValueError) as error:
         bot.send()
     assert "The msg parameter is required" in str(error.value)
@@ -84,13 +84,14 @@ def test_verify_markdown_error() -> None:
     Test MARKDOWN verification error.
     :return:
     """
-    bot = MarkdownWeComGroupBot(getenv("VALID_KEY"))
+    bot = MarkdownBot(getenv("VALID_KEY"))
     with raises(ValueError) as error:
         bot.send()
     assert "The msg parameter is required" in str(error.value)
     with raises(ValueError) as error:
-        bot.color("This will raise an exception", "red")
-    assert "Invalid color" in str(error.value)
+        # pylint: disable=protected-access
+        bot._color("This will raise an exception", "red")
+    assert "Invalid _color" in str(error.value)
 
 
 def test_verify_news_error() -> None:
@@ -98,7 +99,7 @@ def test_verify_news_error() -> None:
     Test News verification error.
     :return:
     """
-    bot = NewsWeComGroupBot(getenv("VALID_KEY"))
+    bot = NewsBot(getenv("VALID_KEY"))
     # Test empty articles
     with raises(ValueError) as exception_info:
         bot.send()
@@ -127,7 +128,7 @@ def test_verify_image_error() -> None:
     Test image verification error.
     :return:
     """
-    bot = ImageWeComGroupBot(getenv("VALID_KEY"))
+    bot = ImageBot(getenv("VALID_KEY"))
     with raises(ValueError) as exception_info:
         bot.send()
     assert "The file_path parameter is required" in str(exception_info.value)
@@ -147,7 +148,7 @@ def test_verify_file_error() -> None:
     Test verify file error.
     :return:
     """
-    bot = FileWeComGroupBot(getenv("VALID_KEY"))
+    bot = FileBot(getenv("VALID_KEY"))
     # Test lack file
     with raises(ValueError) as exception_info:
         bot.send()
@@ -172,7 +173,7 @@ def test_verify_voice_error() -> None:
     Test voice verification error.
     :return:
     """
-    bot = VoiceWeComGroupBot(getenv("VALID_KEY"))
+    bot = VoiceBot(getenv("VALID_KEY"))
     # Test lack file
     with raises(ValueError) as exception_info:
         bot.send()
@@ -199,7 +200,7 @@ def test_verify_text_card_error() -> None:
     Test Text Card verification error.
     :return:
     """
-    bot = TextCardWeComGroupBot(getenv("VALID_KEY"))
+    bot = TextCardBot(getenv("VALID_KEY"))
     with open(errors_file, "r", encoding="utf-8") as _:
         tests = safe_load(_)
     for err_msg, kwargs in tests["text"].items():
@@ -213,7 +214,7 @@ def test_verify_news_card_error() -> None:
     Test News Card verification error.
     :return:
     """
-    bot = NewsCardWeComGroupBot(getenv("VALID_KEY"))
+    bot = NewsCardBot(getenv("VALID_KEY"))
     with open(errors_file, "r", encoding="utf-8") as _:
         tests = safe_load(_)
     for err_msg, kwargs in tests["news"].items():

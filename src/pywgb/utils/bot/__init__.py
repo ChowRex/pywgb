@@ -7,7 +7,7 @@ Abstract classes
 - Created Time: 2025/5/27 13:54
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
-__all__ = ["AbstractWeComGroupBot", "FilePathLike", "MediaUploader"]
+__all__ = ["AbstractBot", "FilePathLike"]
 
 from abc import ABC, abstractmethod
 from logging import getLogger
@@ -28,13 +28,13 @@ FilePathLike = Union[str, PathLike]
 ConvertedData = Tuple[Tuple[Dict[str, str]], Dict[str, str]]
 
 
-class _BotBasic(ABC):
+class _Basic(ABC):
     """Private bot basic class"""
 
     # The base path of the document
     _DOC_URL: str = "https://developer.work.weixin.qq.com/document/path/99110"
     # API Endpoint base url
-    _API_END_POINT: str = 'https://qyapi.weixin.qq.com'
+    _API_BASE_URL: str = 'https://qyapi.weixin.qq.com'
 
     def __init__(self, key: str) -> None:
         """
@@ -44,7 +44,7 @@ class _BotBasic(ABC):
         if key is None:
             raise ValueError("Key is required")
         self.key = self._verify_uuid(key.strip())
-        self.session: Session = session()
+        self._session: Session = session()
 
     @staticmethod
     def _parse_webhook_url(url: str) -> str:
@@ -96,17 +96,17 @@ class _BotBasic(ABC):
         return f"{self.__class__.__name__}({self.key})"
 
     @property
-    def api_end_point(self) -> str:
+    def _api_url(self) -> str:
         """
         Returns the address of the spliced endpoint url.
         :return: Endpoint url
         """
-        end_point = urljoin(self._API_END_POINT, self._api_end_point_path)
+        end_point = urljoin(self._API_BASE_URL, self._api_path)
         return end_point
 
     @property
     @abstractmethod
-    def _api_end_point_path(self) -> str:
+    def _api_path(self) -> str:
         """
         The path of the API Endpoint.
         :return: path of the API Endpoint.
@@ -130,21 +130,83 @@ class _BotBasic(ABC):
         return url
 
 
-class AbstractWeComGroupBot(_BotBasic, ABC):
+class _MediaUploader(_Basic):
+    """Upload voice and file class"""
+
+    @property
+    def _api_path(self) -> str:
+        """
+        The path of the API Endpoint.
+        :return: path of the API Endpoint.
+        """
+        return "cgi-bin/webhook/upload_media"
+
+    @property
+    def _doc_key(self) -> str:
+        """
+        The key of the document description.
+        :return: key of the document description
+        """
+        return "文件上传接口"
+
+    @handle_request_exception
+    def _upload_temporary_file(self, file_path: Path, file_type: str) -> dict:
+        """
+        Upload temporary file from file path.
+        :param file_path: File path.
+        :param file_type: File type.
+        :return:
+        """
+        kwargs = {
+            "url": self._api_url,
+            "params": {
+                "key": self.key,
+                "type": file_type
+            }
+        }
+        cmd = partial(self._session.post, **kwargs)
+        with open(file_path, "rb") as files:
+            response = cmd(files={"media": files})
+        result = response.json()
+        return result
+
+    @verify_file
+    def upload(self, file_path: FilePathLike, /, **kwargs) -> str:
+        """
+        Upload voice and file.
+        :param file_path: The path of the file.
+        :param kwargs: Other keyword arguments.
+        :return: Result dict.
+        """
+        file_path: Path = Path(file_path)
+        # Only support `AMR` format for voice, others must be file type
+        file_type: str = "voice" if file_path.suffix == ".amr" else "file"
+        logger.debug("~~~~ %s ~~~~", self.upload.__name__)
+        logger.debug("File path: %s", file_path)
+        logger.debug("Other kwargs: %s", kwargs)
+        logger.debug("API endpoint URL: %s", self._api_url)
+        result = self._upload_temporary_file(file_path, file_type)
+        logger.debug("~~~~ %s ~~~~", self.upload.__name__)
+        logger.info("%s has been uploaded: %s", file_type.capitalize(), result)
+        return result["media_id"]
+
+
+class AbstractBot(_Basic, ABC):
     """Abstract class of Wecom group bot."""
 
     # Default requests headers
     _HEADERS: dict = {"Content-Type": "application/json"}
     # Class level variable for detect overheat
-    OVERHEAT: int = -1
+    _OVERHEAT: int = -1
 
     def __init__(self, key: str) -> None:
-        _BotBasic.__init__(self, key)
+        _Basic.__init__(self, key)
         ABC.__init__(self)
-        self.session.headers = self._HEADERS
+        self._session.headers = self._HEADERS
+        self._uploader: _MediaUploader = _MediaUploader(key)
 
     @property
-    def _api_end_point_path(self) -> str:
+    def _api_path(self) -> str:
         """
         The path of the API Endpoint.
         :return: path of the API Endpoint.
@@ -184,17 +246,26 @@ class AbstractWeComGroupBot(_BotBasic, ABC):
         logger.debug("Articles: %s", articles)
         logger.debug("File path: %s", file_path)
         logger.debug("Other kwargs: %s", kwargs)
-        logger.debug("API endpoint URL: %s", self.api_end_point)
-        response = self.session.post(self.api_end_point,
-                                     params={"key": self.key},
-                                     json=msg)
+        logger.debug("API endpoint URL: %s", self._api_url)
+        response = self._session.post(self._api_url,
+                                      params={"key": self.key},
+                                      json=msg)
         result = response.json()
         logger.debug("~~~~ %s ~~~~", self.send.__name__)
         logger.info("Message has been sent: %s", result)
         return result
 
+    def upload(self, file_path: FilePathLike) -> str:
+        """
+        Upload temporary media file
+        :param file_path: The path of the file to upload.
+        :return:
+        """
+        result = self._uploader.upload(file_path)
+        return result
+
     @abstractmethod
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify arguments methods. Subclasses must complete specific implementations
         :param args: Positional arguments.
@@ -203,77 +274,10 @@ class AbstractWeComGroupBot(_BotBasic, ABC):
         """
 
     @abstractmethod
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Prepare data methods, subclasses must complete specific implementations
         :param args: Positional arguments.
         :param kwargs: Other keyword arguments.
         :return: Result dict.
         """
-
-
-class MediaUploader(_BotBasic):
-    """Upload voice and file class"""
-
-    @property
-    def _api_end_point_path(self) -> str:
-        """
-        The path of the API Endpoint.
-        :return: path of the API Endpoint.
-        """
-        return "cgi-bin/webhook/upload_media"
-
-    @property
-    def _doc_key(self) -> str:
-        """
-        The key of the document description.
-        :return: key of the document description
-        """
-        return "文件上传接口"
-
-    @handle_request_exception
-    def _upload_temporary_file(self, file_path: Path, file_type: str) -> dict:
-        """
-        Upload temporary file from file path.
-        :param file_path: File path.
-        :param file_type: File type.
-        :return:
-        """
-        kwargs = {
-            "url": self.api_end_point,
-            "params": {
-                "key": self.key,
-                "type": file_type
-            }
-        }
-        cmd = partial(self.session.post, **kwargs)
-        with open(file_path, "rb") as files:
-            response = cmd(files={"media": files})
-        result = response.json()
-        return result
-
-    @verify_file
-    def upload(self, file_path: FilePathLike, /, **kwargs) -> dict:
-        """
-        Upload voice and file.
-        :param file_path: The path of the file.
-        :param kwargs: Other keyword arguments.
-        :return: Result dict.
-        """
-        file_path: Path = Path(file_path)
-        # Only support `AMR` format for voice, others must be file type
-        file_type: str = "voice" if file_path.suffix == ".amr" else "file"
-        logger.debug("~~~~ %s ~~~~", self.upload.__name__)
-        logger.debug("File path: %s", file_path)
-        logger.debug("Other kwargs: %s", kwargs)
-        logger.debug("API endpoint URL: %s", self.api_end_point)
-        result = self._upload_temporary_file(file_path, file_type)
-        logger.debug("~~~~ %s ~~~~", self.upload.__name__)
-        logger.info("%s has been uploaded: %s", file_type.capitalize(), result)
-        result = {
-            "msgtype": file_type,
-            file_type: {
-                "media_id": result["media_id"]
-            }
-        }
-        return result

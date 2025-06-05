@@ -13,10 +13,10 @@ from typing import List
 from jmespath import search
 
 from . import TemplateCardKeys, TemplateCardRequirements
-from .. import AbstractWeComGroupBot, ConvertedData
+from .. import AbstractBot, ConvertedData
 
 
-class NewsCardWeComGroupBot(AbstractWeComGroupBot):
+class NewsCardBot(AbstractBot):
     """News Card type message Wecom Group Bot"""
 
     _VALID_KEYS: List[str] = TemplateCardKeys + [
@@ -27,7 +27,7 @@ class NewsCardWeComGroupBot(AbstractWeComGroupBot):
     def _doc_key(self) -> str:
         return "图文展示模版卡片"
 
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments.
@@ -82,7 +82,7 @@ class NewsCardWeComGroupBot(AbstractWeComGroupBot):
             if cmd(kwargs):
                 raise ValueError(msg)
 
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to text card format data.
         :param args: Positional arguments.

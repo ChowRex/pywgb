@@ -10,13 +10,13 @@ Voice type message sender
 from pathlib import Path
 from logging import getLogger
 
-from . import AbstractWeComGroupBot, ConvertedData, MediaUploader
+from . import AbstractBot, ConvertedData
 from ..deco import verify_file
 
 logger = getLogger(__name__)
 
 
-class VoiceWeComGroupBot(AbstractWeComGroupBot):
+class VoiceBot(AbstractBot):
     """Voice type message Wecom Group Bot"""
 
     @property
@@ -24,7 +24,7 @@ class VoiceWeComGroupBot(AbstractWeComGroupBot):
         return "语音类型"
 
     @verify_file
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments.
@@ -38,7 +38,7 @@ class VoiceWeComGroupBot(AbstractWeComGroupBot):
             raise ValueError("Just support voice type: amr")
 
     # pylint:disable=unused-argument
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to Voice format.
         :param args: Positional arguments.
@@ -65,5 +65,6 @@ class VoiceWeComGroupBot(AbstractWeComGroupBot):
             logger.warning(
                 'Re-install this package using `pip install "pywgb[all]"` will fix this warning.'
             )
-        result = MediaUploader(self.key).upload(file_path, **kwargs)
+        media_id = self.upload(file_path)
+        result = {"msgtype": "voice", "voice": {"media_id": media_id}}
         return (result,), kwargs

@@ -8,11 +8,11 @@ File type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from . import AbstractWeComGroupBot, ConvertedData, MediaUploader
+from . import AbstractBot, ConvertedData
 from ..deco import verify_file
 
 
-class FileWeComGroupBot(AbstractWeComGroupBot):
+class FileBot(AbstractBot):
     """File type message Wecom Group Bot"""
 
     @property
@@ -20,7 +20,7 @@ class FileWeComGroupBot(AbstractWeComGroupBot):
         return "文件类型"
 
     @verify_file
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments.
@@ -29,7 +29,7 @@ class FileWeComGroupBot(AbstractWeComGroupBot):
         """
 
     # pylint:disable=unused-argument
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to File format.
         :param args: Positional arguments.
@@ -43,5 +43,6 @@ class FileWeComGroupBot(AbstractWeComGroupBot):
         size_range = 5 < len(content) < 20 * pow(1024, 2)
         if not size_range or kwargs.get("test") == "oversize_file":
             raise ValueError("The file size is out of range: 5B < SIZE < 20M")
-        result = MediaUploader(self.key).upload(file_path, **kwargs)
+        media_id = self.upload(file_path)
+        result = {"msgtype": "file", "file": {"media_id": media_id}}
         return (result,), kwargs

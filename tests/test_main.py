@@ -14,7 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # pylint: disable=import-error
-from src.pywgb import NewsCardWeComGroupBot
+from src.pywgb import NewsCardBot
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
 env_file = Path(__file__).parent.with_name(".env")
@@ -135,7 +135,7 @@ def main():  # pragma: no cover
     For unit testing
     :return:
     """
-    bot = NewsCardWeComGroupBot(getenv("VALID_KEY"))
+    bot = NewsCardBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(**TEST_VALID_NEWS_CARD)
     print(result)

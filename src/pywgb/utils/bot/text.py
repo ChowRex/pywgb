@@ -8,17 +8,17 @@ Text type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from . import AbstractWeComGroupBot, ConvertedData
+from . import AbstractBot, ConvertedData
 
 
-class TextWeComGroupBot(AbstractWeComGroupBot):
+class TextBot(AbstractBot):
     """Text type message Wecom Group Bot"""
 
     @property
     def _doc_key(self) -> str:
         return "文本类型"
 
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments.
@@ -39,7 +39,7 @@ class TextWeComGroupBot(AbstractWeComGroupBot):
             if not all(isinstance(_, str) for _ in data):
                 raise ValueError(err_msg)
 
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to text format data.
         :param args: Positional arguments.

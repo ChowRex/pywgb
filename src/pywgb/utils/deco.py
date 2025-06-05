@@ -24,18 +24,19 @@ def verify_and_convert_arguments(function):
     :return: Result dict.
     """
 
+    # pylint: disable=protected-access
     @wraps(function)
     def wrapper(self, *args, **kwargs) -> dict:
         logger.debug("---- %s ----", verify_and_convert_arguments.__name__)
         logger.debug("Positional arguments: %s", args)
         logger.debug("Other kwargs: %s", kwargs)
         try:
-            self.verify_arguments(*args, **kwargs)
+            self._verify_arguments(*args, **kwargs)
         except ValueError as error:
             logger.critical("Verification of arguments failed: %s", error)
             raise error
         try:
-            args, kwargs = self.convert_arguments(*args, **kwargs)
+            args, kwargs = self._convert_arguments(*args, **kwargs)
         except ValueError as error:
             logger.critical("Convertion of arguments failed: %s", error)
             raise error
@@ -56,6 +57,7 @@ def detect_overheat(function):
     overheat_threshold: int = 60
     overheat_error_code: int = 45009
 
+    # pylint: disable=protected-access
     @wraps(function)
     def wrapper(self, *args, **kwargs) -> dict:
         """
@@ -74,18 +76,18 @@ def detect_overheat(function):
             result = {"errcode": overheat_error_code}
         else:
             threshold = overheat_threshold
-            if self.OVERHEAT >= 0:
+            if self._OVERHEAT >= 0:
                 logger.warning("Overheat detected.")
-                while self.OVERHEAT >= 0:
-                    print(f"\rCooling down: {self.OVERHEAT:02d}s",
+                while self._OVERHEAT >= 0:
+                    print(f"\rCooling down: {self._OVERHEAT:02d}s",
                           end='',
                           flush=True)
                     sleep(1)
-                    self.OVERHEAT -= 1
+                    self._OVERHEAT -= 1
                 print()
             result = function(self, *args, **kwargs)
         if result.get("errcode") == overheat_error_code:
-            self.OVERHEAT = threshold
+            self._OVERHEAT = threshold
             result = wrapper(self, *args, **kwargs)
         logger.debug("==== %s ====", detect_overheat.__name__)
         return result

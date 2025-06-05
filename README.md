@@ -26,17 +26,33 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 4. If you want to send simple messages, refer code below:
 
    ```python
-   from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot, NewsWeComGroupBot, FileWeComGroupBot, VoiceWeComGroupBot
+   from pywgb import TextBot, MarkdownBot, ImageBot, NewsBot, FileBot, VoiceBot
    
    KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
    
    # If you want to send Text message, use this.
    msg = "This is a test Text message."
-   bot = TextWeComGroupBot(KEY)
+   # If you want to mention someone, refer this.
+   kwargs = {
+     "mentioned_list": [
+       # If you know the userid
+       "userid",
+       # Use below for ALL people
+       "@all",
+     ],
+     "mentioned_mobile_list": [
+       # If you know the phone number
+       "13800001111",
+       # Use below for ALL people
+       "@all",
+     ]
+   }
+   bot = TextBot(KEY)
    bot.send(msg)
+   bot.send(msg, **kwargs)
    
    # If you want to send Markdown message, use this.
-   bot = MarkdownWeComGroupBot(KEY)
+   bot = MarkdownBot(KEY)
    col = [bot.green, bot.gray, bot.orange]
    msg = [col[idx % 3](ltr) for idx, ltr in enumerate("colorful")]
    msg = f"This is a {''.join(msg)} Markdown message"
@@ -44,7 +60,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
    
    # If you want to send Image message, use this.
    file = "Path/To/Your/Image.png" or "Path/To/Your/Image.jpg"
-   bot = ImageWeComGroupBot(KEY)
+   bot = ImageBot(KEY)
    bot.send(file_path=file)
    
    # If you want to send News message, use this.
@@ -57,132 +73,159 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
            "picurl": "https://www.tencent.com/img/index/tencent_logo.png"
        },
    ]
-   bot = NewsWeComGroupBot(KEY)
+   bot = NewsBot(KEY)
    bot.send(articles=articles)
    
    # If you want to send File message, use this.
    file = "Path/To/Your/File.suffix"
-   bot = FileWeComGroupBot(KEY)
+   bot = FileBot(KEY)
    bot.send(file_path=file)
    
    # If you want to send Voice message, use this.
    file = "Path/To/Your/Voice.amr"  # BE ADVISED: ONLY support amr file
-   bot = VoiceWeComGroupBot(KEY)
+   bot = VoiceBot(KEY)
    bot.send(file_path=file)
    
    ```
 
 5. Send template card messages (***Advanced usage***)
 
-    ```python
-    from pywgb import TextCardWeComGroupBot, NewsCardWeComGroupBot
-    
-    KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
-    
-    # Prepare the text card content
-    kwargs = {
-        "main_title": {
-            "title": "Test message",
-            "desc": "This is a test template text card message"
-        },
-        "emphasis_content": {
-            "title": "100",
-            "desc": "No meaning"
-        },
-        "quote_area": {
-            "type": 1,
-            "url": "https://work.weixin.qq.com/?from=openApi",
-            "title": "Title reference",
-            "quote_text": "Hello\nWorld!"
-        },
-        "sub_title_text": "This is sub-title",
-        "horizontal_content_list": [{
-            "keyname": "Author",
-            "value": "Rex"
-        }, {
-            "keyname": "Google",
-            "value": "Click to go",
-            "type": 1,
-            "url": "https://google.com"
-        }],
-        "jump_list": [{
-            "type": 1,
-            "url": "https://bing.com",
-            "title": "Bing"
-        }],
-        "card_action": {
-            "type": 1,
-            "url": "https://work.weixin.qq.com/?from=openApi",
+    - Upload temporary files, any kind of bot can upload file.
+
+        ```python
+        from pywgb import TextBot, MarkdownBot, ImageBot, NewsBot, FileBot, VoiceBot, TextCardBot, NewsCardBot
+        
+        KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
+        
+        # Specify your tempory file path
+        file = "Path/To/Your/File.suffix"
+        # Any kind of bot can upload file
+        bot = TextBot(KEY)
+        media_id = bot.upload(file)
+        print(media_id)
+        
+        ```
+
+    - `TextTemplateCard` *(Need more detail? click [here](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E6%9C%AC%E9%80%9A%E7%9F%A5%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87).)*
+
+        ```python
+        from pywgb import TextCardBot
+        
+        KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
+        
+        # Prepare the text card content
+        kwargs = {
+            "main_title": {
+                "title": "Test message",
+                "desc": "This is a test template text card message"
+            },
+            "emphasis_content": {
+                "title": "100",
+                "desc": "No meaning"
+            },
+            "quote_area": {
+                "type": 1,
+                "url": "https://work.weixin.qq.com/?from=openApi",
+                "title": "Title reference",
+                "quote_text": "Hello\nWorld!"
+            },
+            "sub_title_text": "This is sub-title",
+            "horizontal_content_list": [{
+                "keyname": "Author",
+                "value": "Rex"
+            }, {
+                "keyname": "Google",
+                "value": "Click to go",
+                "type": 1,
+                "url": "https://google.com"
+            }],
+            "jump_list": [{
+                "type": 1,
+                "url": "https://bing.com",
+                "title": "Bing"
+            }],
+            "card_action": {
+                "type": 1,
+                "url": "https://work.weixin.qq.com/?from=openApi",
+            }
         }
-    }
-    bot = TextCardWeComGroupBot(KEY)
-    bot.send(**kwargs)
-    
-    # Prepare the news card content
-    kwargs = {
-        "source": {
-            "icon_url":
-                "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
-            "desc":
-                "This is for testing",
-            "desc_color":
-                0
-        },
-        "main_title": {
-            "title": "Test message",
-            "desc": "This is a test template news card message"
-        },
-        "card_image": {
-            "url":
-                "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
-            "aspect_ratio":
-                2.25
-        },
-        "image_text_area": {
-            "type":
-                1,
-            "url":
-                "https://work.weixin.qq.com",
-            "title":
-                "Welcom to use pywgb",
-            "desc":
-                "This is a test message",
-            "image_url":
-                "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0"
-        },
-        "quote_area": {
-            "type": 1,
-            "url": "https://work.weixin.qq.com/?from=openApi",
-            "title": "Title reference",
-            "quote_text": "Hello\nWorld!"
-        },
-        "vertical_content_list": [{
-            "title": "Hi, there",
-            "desc": "Welcome to use"
-        }],
-        "horizontal_content_list": [{
-            "keyname": "Author",
-            "value": "Rex"
-        }, {
-            "keyname": "Google",
-            "value": "Click to go",
-            "type": 1,
-            "url": "https://google.com"
-        }],
-        "jump_list": [{
-            "type": 1,
-            "url": "https://bing.com",
-            "title": "Bing"
-        }],
-        "card_action": {
-            "type": 1,
-            "url": "https://work.weixin.qq.com/?from=openApi",
+        bot = TextCardBot(KEY)
+        bot.send(**kwargs)
+        
+        ```
+
+    - `NewsTemplateCard` *(Need more detail? click [here](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E6%96%87%E5%B1%95%E7%A4%BA%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87).)*
+
+        ```python
+        from pywgb import NewsCardBot
+        
+        KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
+        
+        # Prepare the news card content
+        kwargs = {
+            "source": {
+                "icon_url":
+                    "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
+                "desc":
+                    "This is for testing",
+                "desc_color":
+                    0
+            },
+            "main_title": {
+                "title": "Test message",
+                "desc": "This is a test template news card message"
+            },
+            "card_image": {
+                "url":
+                    "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
+                "aspect_ratio":
+                    2.25
+            },
+            "image_text_area": {
+                "type":
+                    1,
+                "url":
+                    "https://work.weixin.qq.com",
+                "title":
+                    "Welcom to use pywgb",
+                "desc":
+                    "This is a test message",
+                "image_url":
+                    "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0"
+            },
+            "quote_area": {
+                "type": 1,
+                "url": "https://work.weixin.qq.com/?from=openApi",
+                "title": "Title reference",
+                "quote_text": "Hello\nWorld!"
+            },
+            "vertical_content_list": [{
+                "title": "Hi, there",
+                "desc": "Welcome to use"
+            }],
+            "horizontal_content_list": [{
+                "keyname": "Author",
+                "value": "Rex"
+            }, {
+                "keyname": "Google",
+                "value": "Click to go",
+                "type": 1,
+                "url": "https://google.com"
+            }],
+            "jump_list": [{
+                "type": 1,
+                "url": "https://bing.com",
+                "title": "Bing"
+            }],
+            "card_action": {
+                "type": 1,
+                "url": "https://work.weixin.qq.com/?from=openApi",
+            }
         }
-    }
-    bot = NewsCardWeComGroupBot(KEY)
-    bot.send(**kwargs)
-    
-    ```
+        bot = NewsCardBot(KEY)
+        bot.send(**kwargs)
+        
+        ```
 
 ## Official Docs
 

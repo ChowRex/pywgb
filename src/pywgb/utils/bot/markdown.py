@@ -12,14 +12,14 @@ from enum import Enum
 from typing import Union, Callable
 from functools import partial
 
-from . import AbstractWeComGroupBot, ConvertedData
+from . import AbstractBot, ConvertedData
 
 
-class MarkdownWeComGroupBot(AbstractWeComGroupBot):
+class MarkdownBot(AbstractBot):
     """Markdown type message Wecom Group Bot"""
 
     class _Color(Enum):
-        """Markdown color enum"""
+        """Markdown _color enum"""
         INFO = "green"
         COMMENT = "gray"
         WARNING = "orange"
@@ -33,7 +33,7 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
     def _doc_key(self) -> str:
         return "markdown类型"
 
-    def verify_arguments(self, *args, **kwargs) -> None:
+    def _verify_arguments(self, *args, **kwargs) -> None:
         """
         Verify the arguments passed.
         :param args: Positional arguments passed.
@@ -45,7 +45,7 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
         except IndexError as error:
             raise ValueError("The msg parameter is required.") from error
 
-    def convert_arguments(self, *args, **kwargs) -> ConvertedData:
+    def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
         Convert the message to Markdown format data.
         :param args: Positional arguments.
@@ -60,11 +60,11 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
         },)
         return result, kwargs
 
-    def color(self, raw: str, color: Union[str, _Color]) -> str:
+    def _color(self, raw: str, color: Union[str, _Color]) -> str:
         """
         Convert normal string to colorful string.
         :param raw: Raw string.
-        :param color: Specify color. Support: green | gray | orange
+        :param color: Specify _color. Support: green | gray | orange
         :return: Colorized string.
         """
         if isinstance(color, str):
@@ -84,7 +84,7 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
         Return a function that green text
         :return: 
         """
-        return partial(self.color, color=self._Color.INFO)
+        return partial(self._color, color=self._Color.INFO)
 
     @property
     def gray(self) -> Callable:
@@ -92,7 +92,7 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
         Return a function that gray text
         :return:
         """
-        return partial(self.color, color=self._Color.COMMENT)
+        return partial(self._color, color=self._Color.COMMENT)
 
     @property
     def orange(self) -> Callable:
@@ -100,4 +100,4 @@ class MarkdownWeComGroupBot(AbstractWeComGroupBot):
         Return a function that orange text
         :return:
         """
-        return partial(self.color, color=self._Color.WARNING)
+        return partial(self._color, color=self._Color.WARNING)

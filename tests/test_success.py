@@ -18,15 +18,14 @@ from dotenv import load_dotenv
 from pytest import raises
 
 # pylint: disable=import-error
-from src.pywgb import FileWeComGroupBot
-from src.pywgb import ImageWeComGroupBot
-from src.pywgb import MarkdownWeComGroupBot
-from src.pywgb import NewsWeComGroupBot
-from src.pywgb import TextWeComGroupBot
-from src.pywgb import VoiceWeComGroupBot
-from src.pywgb import TextCardWeComGroupBot
-from src.pywgb import NewsCardWeComGroupBot
-from src.pywgb.utils import MediaUploader
+from src.pywgb import FileBot
+from src.pywgb import ImageBot
+from src.pywgb import MarkdownBot
+from src.pywgb import NewsBot
+from src.pywgb import TextBot
+from src.pywgb import VoiceBot
+from src.pywgb import TextCardBot
+from src.pywgb import NewsCardBot
 from tests.test_main import VALID_KEY, env_file
 from tests.test_main import TEST_VALID_ARTICLES
 from tests.test_main import TEST_VALID_TEXT_CARD
@@ -38,7 +37,7 @@ load_dotenv(env_file, override=True)
 
 def test_text_initial() -> None:
     """
-    Test TextWeComGroupBot initialisation.
+    Test TextBot initialisation.
     :return:
     """
     valid_url = getenv("VALID_URL")
@@ -46,11 +45,11 @@ def test_text_initial() -> None:
     print("Check valid key:", VALID_KEY)
     print("Check valid url:", valid_url)
     # Verify valid key and url
-    bot = TextWeComGroupBot(VALID_KEY)
+    bot = TextBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
-    assert f"TextWeComGroupBot({VALID_KEY})" == str(bot)
-    assert valid_url.split("=")[-1] == TextWeComGroupBot(valid_url).key
+    assert f"TextBot({VALID_KEY})" == str(bot)
+    assert valid_url.split("=")[-1] == TextBot(valid_url).key
     # Verify invalid key and url
     invalids = {
         getenv("INVALID_KEY"): "Invalid key format",
@@ -59,101 +58,102 @@ def test_text_initial() -> None:
     }
     for code, msg in invalids.items():
         with raises(ValueError) as exception_info:
-            TextWeComGroupBot(code)
+            TextBot(code)
         assert msg in str(exception_info.value)
 
 
 def test_markdown_initial() -> None:
     """
-    Test MarkdownWeComGroupBot initialisation.
+    Test MarkdownBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = MarkdownWeComGroupBot(VALID_KEY)
+    bot = MarkdownBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
 def test_image_initial() -> None:
     """
-    Test ImageWeComGroupBot initialisation.
+    Test ImageBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = ImageWeComGroupBot(VALID_KEY)
+    bot = ImageBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
 def test_news_initial() -> None:
     """
-    Test NewsWeComGroupBot initialisation.
+    Test NewsBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = NewsWeComGroupBot(VALID_KEY)
+    bot = NewsBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
+# pylint: disable=protected-access
 def test_file_initial() -> None:
     """
-    Test NewsWeComGroupBot initialisation.
+    Test NewsBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = FileWeComGroupBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    bot = FileBot(VALID_KEY)
+    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key
     assert VALID_KEY == bot.key
-    uploader = MediaUploader(VALID_KEY)
-    assert urlparse(unquote(uploader.doc)).fragment == uploader._doc_key  # pylint: disable=protected-access
+    uploader = bot._uploader
+    assert urlparse(unquote(uploader.doc)).fragment == uploader._doc_key
     assert VALID_KEY == uploader.key
 
 
 def test_voice_initial() -> None:
     """
-    Test VoiceWeComGroupBot initialisation.
+    Test VoiceBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = VoiceWeComGroupBot(VALID_KEY)
+    bot = VoiceBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
 def test_text_card_initial() -> None:
     """
-    Test TextCardWeComGroupBot initialisation.
+    Test TextCardBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = TextCardWeComGroupBot(VALID_KEY)
+    bot = TextCardBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
 def test_news_card_initial() -> None:
     """
-    Test NewsCardWeComGroupBot initialisation.
+    Test NewsCardBot initialisation.
     :return:
     """
     # Verify valid key and url
-    bot = NewsCardWeComGroupBot(VALID_KEY)
+    bot = NewsCardBot(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
-def test_successful_send() -> None:
+def test_basic_send() -> None:
     """
-    Test send message function
+    Test basic send.
     :return:
     """
-    bot = TextWeComGroupBot(getenv("VALID_KEY"))
+    bot = TextBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(f"This is a test TEXT message: {randint(1, 100)}")
     print(result)
     assert result["errcode"] == 0
-    bot = MarkdownWeComGroupBot(getenv("VALID_KEY"))
+    bot = MarkdownBot(getenv("VALID_KEY"))
     print(bot)
     col = [bot.green, bot.gray, bot.orange]
     msg = [col[idx % (len(col))](ltr) for idx, ltr in enumerate("colorful")]
@@ -161,33 +161,52 @@ def test_successful_send() -> None:
     result = bot.send(msg)
     print(result)
     assert result["errcode"] == 0
-    bot = ImageWeComGroupBot(getenv("VALID_KEY"))
+    bot = ImageBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(file_path=Path(__file__).with_name("test.png"))
     print(result)
     assert result["errcode"] == 0
-    bot = NewsWeComGroupBot(getenv("VALID_KEY"))
+    bot = NewsBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(articles=TEST_VALID_ARTICLES)
     print(result)
     assert result["errcode"] == 0
-    bot = FileWeComGroupBot(getenv("VALID_KEY"))
+    bot = FileBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(file_path=Path(__file__).with_name("test.png"))
     print(result)
     assert result["errcode"] == 0
-    bot = VoiceWeComGroupBot(getenv("VALID_KEY"))
+    bot = VoiceBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(file_path=Path(__file__).with_name("test.amr"))
     print(result)
     assert result["errcode"] == 0
-    bot = TextCardWeComGroupBot(getenv("VALID_KEY"))
+
+
+def test_advanced_send() -> None:
+    """
+    Test advanced send function
+    :return:
+    """
+    bot = TextCardBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(**TEST_VALID_TEXT_CARD)
     print(result)
     assert result["errcode"] == 0
-    bot = NewsCardWeComGroupBot(getenv("VALID_KEY"))
+    bot = NewsCardBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(**TEST_VALID_NEWS_CARD)
     print(result)
     assert result["errcode"] == 0
+
+
+def test_upload() -> None:
+    """
+    Test upload function
+    :return:
+    """
+    file = Path(__file__).with_name("test.png")
+    bot = TextBot(VALID_KEY)
+    result = bot.upload(file)
+    print(result)
+    assert result
