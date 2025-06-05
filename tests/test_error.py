@@ -24,6 +24,7 @@ from src.pywgb import NewsWeComGroupBot
 from src.pywgb import TextWeComGroupBot
 from src.pywgb import VoiceWeComGroupBot
 from src.pywgb import TextCardWeComGroupBot
+from src.pywgb import NewsCardWeComGroupBot
 from tests.test_main import env_file, errors_file, TEST_VALID_ARTICLES
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
@@ -202,6 +203,20 @@ def test_verify_text_card_error() -> None:
     with open(errors_file, "r", encoding="utf-8") as _:
         tests = safe_load(_)
     for err_msg, kwargs in tests["text"].items():
+        with raises(ValueError) as error:
+            bot.send(**kwargs)
+        assert err_msg in str(error.value)
+
+
+def test_verify_news_card_error() -> None:
+    """
+    Test News Card verification error.
+    :return:
+    """
+    bot = NewsCardWeComGroupBot(getenv("VALID_KEY"))
+    with open(errors_file, "r", encoding="utf-8") as _:
+        tests = safe_load(_)
+    for err_msg, kwargs in tests["news"].items():
         with raises(ValueError) as error:
             bot.send(**kwargs)
         assert err_msg in str(error.value)

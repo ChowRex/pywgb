@@ -14,7 +14,8 @@ from .bot.image import ImageWeComGroupBot
 from .bot.news import NewsWeComGroupBot
 from .bot.file import FileWeComGroupBot
 from .bot.voice import VoiceWeComGroupBot
-from .bot.text_card import TextCardWeComGroupBot
+from .bot.template_card.text import TextCardWeComGroupBot
+from .bot.template_card.news import NewsCardWeComGroupBot
 
 __all__ = [
     "MediaUploader",
@@ -25,4 +26,5 @@ __all__ = [
     "FileWeComGroupBot",
     "VoiceWeComGroupBot",
     "TextCardWeComGroupBot",
+    "NewsCardWeComGroupBot",
 ]

@@ -9,7 +9,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 
 1. Create a [Wecom Group Bot](https://qinglian.tencent.com/help/docs/2YhR-6/).
 
-2. Copy the webhook URL or just the `key`. It should be like:
+2. Copy the webhook URL or just the `key`. It **MUST** contains an [UUID (8-4-4-4-12)](https://en.wikipedia.org/wiki/Universally_unique_identifier), like:
 
    - `Webhook`: *https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=UUID*
    - `Key`: *UUID*
@@ -23,7 +23,7 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
     pip install -U "pywgb[all]"
     ```
 
-4. Refer code below:
+4. If you want to send simple messages, refer code below:
 
    ```python
    from pywgb import TextWeComGroupBot, MarkdownWeComGroupBot, ImageWeComGroupBot, NewsWeComGroupBot, FileWeComGroupBot, VoiceWeComGroupBot
@@ -75,11 +75,11 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 5. Send template card messages (***Advanced usage***)
 
     ```python
-    from pywgb import TextCardWeComGroupBot
+    from pywgb import TextCardWeComGroupBot, NewsCardWeComGroupBot
     
     KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
     
-    # Prepare the card content
+    # Prepare the text card content
     kwargs = {
         "main_title": {
             "title": "Test message",
@@ -118,6 +118,70 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
     bot = TextCardWeComGroupBot(KEY)
     bot.send(**kwargs)
     
+    # Prepare the news card content
+    kwargs = {
+        "source": {
+            "icon_url":
+                "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
+            "desc":
+                "This is for testing",
+            "desc_color":
+                0
+        },
+        "main_title": {
+            "title": "Test message",
+            "desc": "This is a test template news card message"
+        },
+        "card_image": {
+            "url":
+                "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
+            "aspect_ratio":
+                2.25
+        },
+        "image_text_area": {
+            "type":
+                1,
+            "url":
+                "https://work.weixin.qq.com",
+            "title":
+                "Welcom to use pywgb",
+            "desc":
+                "This is a test message",
+            "image_url":
+                "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0"
+        },
+        "quote_area": {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+            "title": "Title reference",
+            "quote_text": "Hello\nWorld!"
+        },
+        "vertical_content_list": [{
+            "title": "Hi, there",
+            "desc": "Welcome to use"
+        }],
+        "horizontal_content_list": [{
+            "keyname": "Author",
+            "value": "Rex"
+        }, {
+            "keyname": "Google",
+            "value": "Click to go",
+            "type": 1,
+            "url": "https://google.com"
+        }],
+        "jump_list": [{
+            "type": 1,
+            "url": "https://bing.com",
+            "title": "Bing"
+        }],
+        "card_action": {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+        }
+    }
+    bot = NewsCardWeComGroupBot(KEY)
+    bot.send(**kwargs)
+    
     ```
 
 ## Official Docs
@@ -143,6 +207,6 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
     - Add more content into README.md
 - [x] v0.0.6: 🩹 Add `Voice` and `File` type size check.
 - [x] v0.0.7: 🗒️ Add `TextCard` type message support.
-- [ ] v0.0.8: 🗃️ Add `NewsCard` type message support.
-- [ ] v0.1.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
+- [x] v0.0.8: 🗃️ Add `NewsCard` type message support.
+- [ ] v1.0.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 

@@ -1,8 +1,7 @@
 ---
 text:
   "Either `main_title.title` should be existed":
-    main_title:
-      title: ''
+    sub_title_text: ''
   "`quote_area.type` is 1, ":
     main_title:
       title: 'This is a test'
@@ -18,18 +17,18 @@ text:
   "`horizontal_content_list.keyname` must be existed":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: ""
         value: "aaa"
   "`horizontal_content_list.type` is 1,":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -38,9 +37,9 @@ text:
   "`horizontal_content_list.type` is 2,":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -49,9 +48,9 @@ text:
   "`horizontal_content_list.type` is 3,":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -60,9 +59,9 @@ text:
   "`jump_list.title` must be existed":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -73,9 +72,9 @@ text:
   "`jump_list.type` is 1, the `jump_list.url`":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -88,9 +87,9 @@ text:
   "`jump_list.type` is 2, the `jump_list.appid`":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -103,9 +102,9 @@ text:
   "`card_action` and `card_action.type` must be existed":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -120,9 +119,9 @@ text:
   "`card_action.type` is 1, the `card_action.url` must be existed":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -138,9 +137,9 @@ text:
   "`card_action.type` is 2, the `card_action.appid` must be existed":
     main_title:
       title: 'This is a test'
-      quote_area:
-        type: 1
-        url: 'https://cn.bing.com'
+    quote_area:
+      type: 1
+      url: 'https://cn.bing.com'
     horizontal_content_list:
       - keyname: "This is a test content"
         value: "aaa"
@@ -153,3 +152,52 @@ text:
     card_action:
       type: 2
       appid: ""
+news:
+  "Both `main_title` and `main_title.title` must be existed":
+    main_title:
+      title: ''
+  "Both `card_image` and `card_image.url` must be existed":
+    main_title:
+      title: 'This is a test'
+    card_image:
+      url: ""
+  "When `image_text_area.type` is 1, the `image_text_area.url` must be existed":
+    main_title:
+      title: 'This is a test'
+    card_image:
+      url: "https://bing.com"
+    image_text_area:
+      type: 1
+      url: ""
+  "When `image_text_area.type` is 2, the `image_text_area.appid` must be existed":
+    main_title:
+      title: 'This is a test'
+    card_image:
+      url: "https://bing.com"
+    image_text_area:
+      type: 2
+      appid: ""
+  "The `image_text_area.image_url` must be existed":
+    main_title:
+      title: 'This is a test'
+    card_image:
+      url: "https://bing.com"
+    image_text_area:
+      type: 1
+      url: "123"
+      image_url: ""
+  "The `vertical_content_list.title` must be existed":
+    main_title:
+      title: 'This is a test'
+    card_image:
+      url: "https://bing.com"
+    image_text_area:
+      type: 1
+      url: "123"
+      image_url: "aaa"
+    vertical_content_list:
+      - title: ""
+
+
+
+

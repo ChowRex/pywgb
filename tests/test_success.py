@@ -25,9 +25,12 @@ from src.pywgb import NewsWeComGroupBot
 from src.pywgb import TextWeComGroupBot
 from src.pywgb import VoiceWeComGroupBot
 from src.pywgb import TextCardWeComGroupBot
+from src.pywgb import NewsCardWeComGroupBot
 from src.pywgb.utils import MediaUploader
 from tests.test_main import VALID_KEY, env_file
-from tests.test_main import TEST_VALID_ARTICLES, TEST_VALID_TEXT_CARD
+from tests.test_main import TEST_VALID_ARTICLES
+from tests.test_main import TEST_VALID_TEXT_CARD
+from tests.test_main import TEST_VALID_NEWS_CARD
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
 load_dotenv(env_file, override=True)
@@ -129,6 +132,17 @@ def test_text_card_initial() -> None:
     assert VALID_KEY == bot.key
 
 
+def test_news_card_initial() -> None:
+    """
+    Test NewsCardWeComGroupBot initialisation.
+    :return:
+    """
+    # Verify valid key and url
+    bot = NewsCardWeComGroupBot(VALID_KEY)
+    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert VALID_KEY == bot.key
+
+
 def test_successful_send() -> None:
     """
     Test send message function
@@ -170,5 +184,10 @@ def test_successful_send() -> None:
     bot = TextCardWeComGroupBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(**TEST_VALID_TEXT_CARD)
+    print(result)
+    assert result["errcode"] == 0
+    bot = NewsCardWeComGroupBot(getenv("VALID_KEY"))
+    print(bot)
+    result = bot.send(**TEST_VALID_NEWS_CARD)
     print(result)
     assert result["errcode"] == 0
