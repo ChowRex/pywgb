@@ -251,5 +251,16 @@ Wecom(A.K.A. WeChat Work) Group Bot python API.
 - [x] v0.0.6: 🩹 Add `Voice` and `File` type size check.
 - [x] v0.0.7: 🗒️ Add `TextCard` type message support.
 - [x] v0.0.8: 🗃️ Add `NewsCard` type message support.
+- [x] v0.0.9: ♻️ Refactor code.
+- [x] v0.1.0: 🔧 Fix color bug when use markdown type
+- [x] v0.1.1: ⏺️ Refactor all code logic again, I don't like mess and complex.
+- [x] v0.1.2: 💪 Add a SmartBot class
+
+    - Add a SmartBot class
+    - Enhanced `markdown` bot class
+    - Add a txt file for SmartBot testing `File` type
+    - Add empty message verify for Text and Markdown
+    - Add a new markdown test unit
+    - Fully test SmartBot class
 - [ ] v1.0.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 

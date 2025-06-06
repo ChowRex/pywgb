@@ -14,13 +14,24 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # pylint: disable=import-error
-from src.pywgb import NewsCardBot
+from src.pywgb import MarkdownBot
+from src.pywgb import SmartBot
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
 env_file = Path(__file__).parent.with_name(".env")
 errors_file = Path(__file__).with_name("card_errors.yml")
 load_dotenv(env_file, override=True)
 VALID_KEY = getenv("VALID_KEY")
+_md = MarkdownBot(VALID_KEY)
+_COL = [_md.green, _md.gray, _md.orange]
+_COL = "".join(_COL[idx % 3](ltr) for idx, ltr in enumerate("colorful"))
+TEST_VALID_MARKDOWN = f"""
+# TESTING
+
+> Author: **Rex**
+
+This is a {_COL} Markdown message
+"""
 TEST_VALID_ARTICLES = [{
     "title":
         "中秋节礼品领取",
@@ -130,14 +141,18 @@ TEST_VALID_NEWS_CARD = {
 }
 
 
+# pylint: disable=protected-access
 def main():  # pragma: no cover
     """
     For unit testing
     :return:
     """
-    bot = NewsCardBot(getenv("VALID_KEY"))
+    bot = SmartBot(getenv("VALID_KEY"))
     print(bot)
-    result = bot.send(**TEST_VALID_NEWS_CARD)
+    print(bot._MD_REGEXES)
+    print(bot._verify_markdown(TEST_VALID_MARKDOWN))
+    print(bot._verify_markdown("This is not #markdown"))
+    result = bot.send(TEST_VALID_MARKDOWN)
     print(result)
 
 

@@ -27,6 +27,7 @@ from src.pywgb import VoiceBot
 from src.pywgb import TextCardBot
 from src.pywgb import NewsCardBot
 from tests.test_main import VALID_KEY, env_file
+from tests.test_main import TEST_VALID_MARKDOWN
 from tests.test_main import TEST_VALID_ARTICLES
 from tests.test_main import TEST_VALID_TEXT_CARD
 from tests.test_main import TEST_VALID_NEWS_CARD
@@ -155,10 +156,7 @@ def test_basic_send() -> None:
     assert result["errcode"] == 0
     bot = MarkdownBot(getenv("VALID_KEY"))
     print(bot)
-    col = [bot.green, bot.gray, bot.orange]
-    msg = [col[idx % (len(col))](ltr) for idx, ltr in enumerate("colorful")]
-    msg = f"This is a {''.join(msg)} Markdown message"
-    result = bot.send(msg)
+    result = bot.send(TEST_VALID_MARKDOWN)
     print(result)
     assert result["errcode"] == 0
     bot = ImageBot(getenv("VALID_KEY"))

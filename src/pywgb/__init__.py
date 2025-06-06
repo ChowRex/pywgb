@@ -24,8 +24,9 @@ from .bot import FileBot
 from .bot import VoiceBot
 from .bot import TextCardBot
 from .bot import NewsCardBot
+from .bot import SmartBot
 
 __all__ = [
     "TextBot", "MarkdownBot", "ImageBot", "NewsBot", "FileBot", "VoiceBot",
-    "TextCardBot", "NewsCardBot"
+    "TextCardBot", "NewsCardBot", "SmartBot"
 ]

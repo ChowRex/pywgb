@@ -29,6 +29,11 @@ class MarkdownBot(AbstractBot):
             """Return list of valid colors"""
             return [_.value for _ in cls]
 
+        @classmethod
+        def get_valid_codes(cls):
+            """Return list of valid codes"""
+            return [_.name for _ in cls]
+
     @property
     def _doc_key(self) -> str:
         return "markdown类型"
@@ -41,9 +46,11 @@ class MarkdownBot(AbstractBot):
         :return:
         """
         try:
-            args[0]
+            msg = args[0]
         except IndexError as error:
             raise ValueError("The msg parameter is required.") from error
+        if not msg:
+            raise ValueError("Can't send empty message.")
 
     def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
         """
@@ -82,7 +89,7 @@ class MarkdownBot(AbstractBot):
     def green(self) -> Callable:
         """
         Return a function that green text
-        :return: 
+        :return:
         """
         return partial(self._color, color=self._Color.INFO)
 

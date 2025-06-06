@@ -67,6 +67,9 @@ def test_verify_text_error() -> None:
     with raises(ValueError) as error:
         bot.send()
     assert "The msg parameter is required" in str(error.value)
+    with raises(ValueError) as error:
+        bot.send("")
+    assert "Can't send empty message" in str(error.value)
     err_msg = "parameter should be a list of strings"
     tests = [
         [123],
@@ -88,6 +91,9 @@ def test_verify_markdown_error() -> None:
     with raises(ValueError) as error:
         bot.send()
     assert "The msg parameter is required" in str(error.value)
+    with raises(ValueError) as error:
+        bot.send("")
+    assert "Can't send empty message" in str(error.value)
     with raises(ValueError) as error:
         # pylint: disable=protected-access
         bot._color("This will raise an exception", "red")

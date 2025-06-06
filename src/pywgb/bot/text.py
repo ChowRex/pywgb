@@ -9,10 +9,13 @@ Text type message sender
 """
 
 from ._abstract import ConvertedData, AbstractBot
+from .markdown import MarkdownBot
 
 
 class TextBot(AbstractBot):
     """Text type message Wecom Group Bot"""
+
+    _OPTIONAL_ARGS = ["mentioned_list", "mentioned_mobile_list"]
 
     @property
     def _doc_key(self) -> str:
@@ -25,12 +28,9 @@ class TextBot(AbstractBot):
         :param kwargs: Keyword arguments.
         :return:
         """
-        try:
-            args[0]
-        except IndexError as error:
-            raise ValueError("The msg parameter is required.") from error
-        optional_args = ["mentioned_list", "mentioned_mobile_list"]
-        for optional in optional_args:
+        # pylint: disable=protected-access
+        MarkdownBot(self.key)._verify_arguments(*args, **kwargs)
+        for optional in self._OPTIONAL_ARGS:
             if optional not in kwargs:
                 continue
             err_msg = f"The {optional} parameter should be a list of strings."

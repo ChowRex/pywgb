@@ -8,14 +8,9 @@ All bot classes
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from .text import TextBot
-from .markdown import MarkdownBot
-from .image import ImageBot
-from .news import NewsBot
-from .file import FileBot
-from .voice import VoiceBot
-from .template_card.text import TextCardBot
-from .template_card.news import NewsCardBot
+from ._smart import TextBot, MarkdownBot, ImageBot
+from ._smart import NewsBot, FileBot, VoiceBot
+from ._smart import TextCardBot, NewsCardBot, SmartBot
 
 __all__ = [
     "TextBot",
@@ -26,4 +21,5 @@ __all__ = [
     "VoiceBot",
     "TextCardBot",
     "NewsCardBot",
+    "SmartBot",
 ]
