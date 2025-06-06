@@ -8,7 +8,7 @@ File type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 
-from . import AbstractBot, ConvertedData
+from ._abstract import ConvertedData, AbstractBot
 from ..deco import verify_file
 
 

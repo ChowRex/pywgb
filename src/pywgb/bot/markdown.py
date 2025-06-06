@@ -12,7 +12,7 @@ from enum import Enum
 from typing import Union, Callable
 from functools import partial
 
-from . import AbstractBot, ConvertedData
+from ._abstract import ConvertedData, AbstractBot
 
 
 class MarkdownBot(AbstractBot):

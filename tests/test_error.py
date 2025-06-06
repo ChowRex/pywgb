@@ -91,7 +91,7 @@ def test_verify_markdown_error() -> None:
     with raises(ValueError) as error:
         # pylint: disable=protected-access
         bot._color("This will raise an exception", "red")
-    assert "Invalid _color" in str(error.value)
+    assert "Invalid color" in str(error.value)
 
 
 def test_verify_news_error() -> None:

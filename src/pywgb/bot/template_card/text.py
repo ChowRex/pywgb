@@ -13,7 +13,7 @@ from typing import List
 from jmespath import search
 
 from . import TemplateCardKeys, TemplateCardRequirements
-from .. import AbstractBot, ConvertedData
+from .._abstract import ConvertedData, AbstractBot
 
 
 class TextCardBot(AbstractBot):

@@ -11,7 +11,7 @@ from base64 import b64encode
 from hashlib import md5
 from pathlib import Path
 
-from . import AbstractBot, ConvertedData
+from ._abstract import ConvertedData, AbstractBot
 from ..deco import verify_file
 
 

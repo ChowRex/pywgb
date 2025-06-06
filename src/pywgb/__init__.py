@@ -16,11 +16,16 @@ __license__ = "MIT"
 __maintainer__ = __author__
 __email__ = '879582094@qq.com'
 
-from .utils import TextBot
-from .utils import MarkdownBot
-from .utils import ImageBot
-from .utils import NewsBot
-from .utils import FileBot
-from .utils import VoiceBot
-from .utils import TextCardBot
-from .utils import NewsCardBot
+from .bot import TextBot
+from .bot import MarkdownBot
+from .bot import ImageBot
+from .bot import NewsBot
+from .bot import FileBot
+from .bot import VoiceBot
+from .bot import TextCardBot
+from .bot import NewsCardBot
+
+__all__ = [
+    "TextBot", "MarkdownBot", "ImageBot", "NewsBot", "FileBot", "VoiceBot",
+    "TextCardBot", "NewsCardBot"
+]

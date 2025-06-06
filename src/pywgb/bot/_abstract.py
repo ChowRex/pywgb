@@ -1,27 +1,27 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Abstract classes
+Abstract bot classes
 
 - Author: Rex Zhou <879582094@qq.com>
-- Created Time: 2025/5/27 13:54
+- Created Time: 2025/6/6 09:01
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
-__all__ = ["AbstractBot", "FilePathLike"]
+__all__ = ["AbstractBot", "FilePathLike", "ConvertedData"]
 
 from abc import ABC, abstractmethod
+from functools import partial
 from logging import getLogger
 from os import PathLike
 from pathlib import Path
-from typing import Tuple, Dict, Union, List
-from urllib.parse import quote, urlparse, parse_qs, urljoin
+from typing import Union, Tuple, Dict, List
+from urllib.parse import urlparse, parse_qs, urljoin, quote
 from uuid import UUID
-from functools import partial
 
 from requests import Session, session
 
-from ..deco import verify_and_convert_arguments, verify_file
-from ..deco import detect_overheat, handle_request_exception
+from ..deco import handle_request_exception, verify_file
+from ..deco import detect_overheat, verify_and_convert_arguments
 
 logger = getLogger(__name__)
 FilePathLike = Union[str, PathLike]

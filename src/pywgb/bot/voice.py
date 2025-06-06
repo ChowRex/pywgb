@@ -10,7 +10,7 @@ Voice type message sender
 from pathlib import Path
 from logging import getLogger
 
-from . import AbstractBot, ConvertedData
+from ._abstract import ConvertedData, AbstractBot
 from ..deco import verify_file
 
 logger = getLogger(__name__)
