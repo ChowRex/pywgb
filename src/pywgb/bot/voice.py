@@ -58,14 +58,16 @@ class VoiceBot(AbstractBot):
             # pylint: disable=import-outside-toplevel
             from pydub import AudioSegment
             audio = AudioSegment.from_file(file_path, format="amr")
-            print("calculating voice length...")
-            if len(audio) / 1000 > 60 or test == "overlong_voice":
-                raise ValueError("The voice duration is longer than 60s")
+            print("Checking the duration of the voice file...")
         except ImportError:  # pragma: no cover
             logger.warning("Full feature requires `pydub` to be installed.")
             logger.warning(
                 'Re-install this package using `pip install "pywgb[all]"` will fix this warning.'
             )
+            print("Required package `pydub` not found. Skip check duration...")
+            audio = []
+        if len(audio) / 1000 > 60 or test == "overlong_voice":
+            raise ValueError("The voice duration is longer than 60s")
         media_id = self.upload(file_path)
         result = {"msgtype": "voice", "voice": {"media_id": media_id}}
         return (result,), kwargs

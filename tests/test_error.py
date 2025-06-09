@@ -186,14 +186,12 @@ def test_verify_voice_error() -> None:
     assert "Just support voice type: amr" in str(exception_info.value)
     # Test overlong and oversize voice
     file = Path(__file__).with_name("test.amr")
-    tests = {
-        "oversize_voice": "The voice size is out of range",
-        "overlong_voice": "The voice duration is longer than 60s",
-    }
-    for code, msg in tests.items():
-        with raises(ValueError) as exception_info:
-            bot.send(file_path=file, test=code)
-        assert msg in str(exception_info.value)
+    with raises(ValueError) as exception_info:
+        bot.send(file_path=file, test="oversize_voice")
+    assert "The voice size is out of range" in str(exception_info.value)
+    with raises(ValueError) as exception_info:
+        bot.send(file_path=file, test="overlong_voice")
+    assert "The voice duration is longer than 60s" in str(exception_info.value)
 
 
 def test_verify_text_card_error() -> None:

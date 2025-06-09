@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pywgb"
-version = "0.1.6"
+version = "0.1.7"
 authors = [
     { name="Rex Zhou", email="879582094@qq.com" },
 ]
@@ -26,6 +26,7 @@ all = [
 ]
 test = [
     "pytest",
+    "pytest-cov",
     "coverage",
     "pylint",
     "python-dotenv",
