@@ -1,0 +1,42 @@
+name: Coverage Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          pip install -e ".[test]"
+
+      - name: Run tests with coverage
+        run: |
+          coverage run -m pytest -v --capture=no --show-capture=all
+
+      - name: Generate coverage report
+        run: |
+          coverage xml
+          coverage html
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: coverage.xml
+          fail_ci_if_error: true
+
+      - name: Archive HTML coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-html
+          path: htmlcov
