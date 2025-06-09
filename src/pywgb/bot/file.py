@@ -9,7 +9,7 @@ File type message sender
 """
 
 from ._abstract import ConvertedData, AbstractBot
-from ..deco import verify_file
+from .._deco import verify_file
 
 
 class FileBot(AbstractBot):

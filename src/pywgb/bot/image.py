@@ -12,7 +12,7 @@ from hashlib import md5
 from pathlib import Path
 
 from ._abstract import ConvertedData, AbstractBot
-from ..deco import verify_file
+from .._deco import verify_file
 
 
 class ImageBot(AbstractBot):

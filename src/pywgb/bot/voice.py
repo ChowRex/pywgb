@@ -11,7 +11,7 @@ from pathlib import Path
 from logging import getLogger
 
 from ._abstract import ConvertedData, AbstractBot
-from ..deco import verify_file
+from .._deco import verify_file
 
 logger = getLogger(__name__)
 
@@ -58,6 +58,7 @@ class VoiceBot(AbstractBot):
             # pylint: disable=import-outside-toplevel
             from pydub import AudioSegment
             audio = AudioSegment.from_file(file_path, format="amr")
+            print("calculating voice length...")
             if len(audio) / 1000 > 60 or test == "overlong_voice":
                 raise ValueError("The voice duration is longer than 60s")
         except ImportError:  # pragma: no cover

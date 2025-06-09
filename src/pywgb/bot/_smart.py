@@ -20,7 +20,7 @@ from .voice import VoiceBot
 from .template_card.text import TextCardBot
 from .template_card.news import NewsCardBot
 from ._abstract import AbstractBot, FilePathLike
-from ..deco import verify_file
+from .._deco import verify_file
 
 # pylint: disable=protected-access
 _Colors: List[str] = MarkdownBot._Color.get_valid_codes()

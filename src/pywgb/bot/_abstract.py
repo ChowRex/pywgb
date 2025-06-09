@@ -20,8 +20,8 @@ from uuid import UUID
 
 from requests import Session, session
 
-from ..deco import handle_request_exception, verify_file
-from ..deco import detect_overheat, verify_and_convert_arguments
+from .._deco import handle_request_exception, verify_file
+from .._deco import detect_overheat, verify_and_convert_arguments
 
 logger = getLogger(__name__)
 FilePathLike = Union[str, PathLike]

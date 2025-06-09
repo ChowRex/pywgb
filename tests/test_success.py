@@ -18,14 +18,9 @@ from dotenv import load_dotenv
 from pytest import raises
 
 # pylint: disable=import-error
-from src.pywgb import FileBot
-from src.pywgb import ImageBot
-from src.pywgb import MarkdownBot
-from src.pywgb import NewsBot
-from src.pywgb import TextBot
-from src.pywgb import VoiceBot
-from src.pywgb import TextCardBot
-from src.pywgb import NewsCardBot
+from src.pywgb.bot import TextBot, MarkdownBot, NewsBot
+from src.pywgb.bot import ImageBot, VoiceBot, FileBot
+from src.pywgb.bot import TextCardBot, NewsCardBot
 from tests.test_main import VALID_KEY, env_file
 from tests.test_main import TEST_VALID_MARKDOWN
 from tests.test_main import TEST_VALID_ARTICLES

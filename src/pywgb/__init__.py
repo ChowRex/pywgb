@@ -16,17 +16,7 @@ __license__ = "MIT"
 __maintainer__ = __author__
 __email__ = '879582094@qq.com'
 
-from .bot import TextBot
-from .bot import MarkdownBot
-from .bot import ImageBot
-from .bot import NewsBot
-from .bot import FileBot
-from .bot import VoiceBot
-from .bot import TextCardBot
-from .bot import NewsCardBot
+from . import bot
 from .bot import SmartBot
 
-__all__ = [
-    "TextBot", "MarkdownBot", "ImageBot", "NewsBot", "FileBot", "VoiceBot",
-    "TextCardBot", "NewsCardBot", "SmartBot"
-]
+__all__ = ["bot", "SmartBot"]

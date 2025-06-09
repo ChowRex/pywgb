@@ -14,7 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # pylint: disable=import-error
-from src.pywgb import MarkdownBot
+from src.pywgb.bot import MarkdownBot
 from src.pywgb import SmartBot
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")

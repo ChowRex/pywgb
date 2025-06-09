@@ -17,14 +17,9 @@ from pytest import raises
 from yaml import safe_load
 
 # pylint: disable=import-error
-from src.pywgb import FileBot
-from src.pywgb import ImageBot
-from src.pywgb import MarkdownBot
-from src.pywgb import NewsBot
-from src.pywgb import TextBot
-from src.pywgb import VoiceBot
-from src.pywgb import TextCardBot
-from src.pywgb import NewsCardBot
+from src.pywgb.bot import TextBot, MarkdownBot, NewsBot
+from src.pywgb.bot import ImageBot, VoiceBot, FileBot
+from src.pywgb.bot import TextCardBot, NewsCardBot
 from tests.test_main import env_file, errors_file, TEST_VALID_ARTICLES
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
