@@ -20,6 +20,11 @@ jobs:
           pip install -e ".[test]"
 
       - name: Run tests with coverage
+        env:
+          VALID_KEY: ${{ secrets.VALID_KEY }}
+          VALID_URL: ${{ secrets.VALID_URL }}
+          INVALID_KEY: ${{ env.INVALID_KEY }}
+          INVALID_URL: ${{ env.INVALID_URL }}
         run: |
           coverage run -m pytest -v --capture=no --show-capture=all
 
