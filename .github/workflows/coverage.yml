@@ -10,20 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-
       - name: Install system dependencies for pydub
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
-
       - name: Install dependencies
         run: |
           pip install -e ".[test]"
-
       - name: Run tests with coverage
         env:
           VALID_KEY: ${{ secrets.VALID_KEY }}
@@ -32,18 +28,15 @@ jobs:
           INVALID_URL: ${{ env.INVALID_URL }}
         run: |
           coverage run -m pytest -v --capture=no --show-capture=all
-
       - name: Generate coverage report
         run: |
           coverage xml
           coverage html
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
-
       - name: Archive HTML coverage report
         uses: actions/upload-artifact@v4
         with:

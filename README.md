@@ -1,5 +1,5 @@
 # pywgb
-Wecom(A.K.A. WeChat Work) Group Bot python API.
+Wecom(A.K.A. WeChat Work) Group Bot python API. [![codecov](https://codecov.io/gh/ChowRex/pywgb/graph/badge.svg?token=1SDIUB46RU)](https://codecov.io/gh/ChowRex/pywgb)
 
 ## Homepage
 

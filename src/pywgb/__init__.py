@@ -16,7 +16,10 @@ __license__ = "MIT"
 __maintainer__ = __author__
 __email__ = '879582094@qq.com'
 
+from importlib.metadata import version
+
 from . import bot
 from .bot import SmartBot
 
+__version__ = version('pywgb')
 __all__ = ["bot", "SmartBot"]
