@@ -37,7 +37,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    horizontal_content_list[?
+                    (horizontal_content_list || `[]`)[?
                         keyname == null || keyname == ''
                     ]
                 ) != `0`
@@ -47,7 +47,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    horizontal_content_list[?
+                    (horizontal_content_list || `[]`)[?
                         type == `1` && (url == null || url == '')
                     ]
                 ) != `0`
@@ -57,7 +57,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    horizontal_content_list[?
+                    (horizontal_content_list || `[]`)[?
                         type == `2` && (media_id == null || media_id == '')
                     ]
                 ) != `0`
@@ -67,7 +67,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    horizontal_content_list[?
+                    (horizontal_content_list || `[]`)[?
                         type == `3` && (userid == null || userid == '')
                     ]
                 ) != `0`
@@ -76,7 +76,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    jump_list[?
+                    (jump_list || `[]`)[?
                         title == null || title == ''
                     ]
                 ) != `0`
@@ -85,7 +85,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    jump_list[?
+                    (jump_list || `[]`)[?
                         type == `1` && (url == null || url == '')
                     ]
                 ) != `0`
@@ -94,7 +94,7 @@ TemplateCardRequirements: Dict[str, Callable] = {
         partial(
             search, """
                 length(
-                    jump_list[?
+                    (jump_list || `[]`)[?
                         type == `2` && (appid == null || appid == '')
                     ]
                 ) != `0`

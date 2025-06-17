@@ -74,10 +74,7 @@ bot.send(msg, **kwargs)
 ##### Markdown
 
 ```python
-from pywgb.bot import MarkdownBot
-
-markdown = MarkdownBot(KEY)
-col = [markdown.green, markdown.gray, markdown.orange]
+col = [bot.markdown_feature.green, bot.markdown_feature.gray, bot.markdown_feature.orange]
 markdown = ''.join(col[idx % 3](ltr) for idx, ltr in enumerate("colorful"))
 markdown = f"""
 # TESTING
@@ -318,4 +315,5 @@ bot.send(file_path=image)
     - Add a new markdown test unit
     - Fully test SmartBot class
 - [x] v1.0.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
+- [x] v1.0.1: 🐛 Fix some bugs and fulfill coverage.
 

@@ -8,12 +8,15 @@ Text Card type message sender
 - Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 from functools import partial
+from logging import getLogger
 from typing import List
 
 from jmespath import search
 
 from . import TemplateCardKeys, TemplateCardRequirements
 from .._abstract import ConvertedData, AbstractBot
+
+logger = getLogger(__name__)
 
 
 class TextCardBot(AbstractBot):
@@ -44,7 +47,9 @@ class TextCardBot(AbstractBot):
             **TemplateCardRequirements
         }
         for msg, cmd in reqs.items():
+            logger.debug("Validating parameter error: %s", msg)
             if cmd(kwargs):
+                logger.critical("[NO PASS] Parameter validation error: %s", msg)
                 raise ValueError(msg)
 
     def _convert_arguments(self, *args, **kwargs) -> ConvertedData:

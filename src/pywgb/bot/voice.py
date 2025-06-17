@@ -59,7 +59,8 @@ class VoiceBot(AbstractBot):
             from pydub import AudioSegment
             audio = AudioSegment.from_file(file_path, format="amr")
             print("Checking the duration of the voice file...")
-        except ImportError:  # pragma: no cover
+        except ImportError as error:  # pragma: no cover
+            logger.debug("Raised error: %s", error)
             logger.warning("Full feature requires `pydub` to be installed.")
             logger.warning(
                 'Re-install this package using `pip install "pywgb[all]"` will fix this warning.'

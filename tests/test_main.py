@@ -14,7 +14,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 # pylint: disable=import-error
-from src.pywgb.bot import MarkdownBot
 from src.pywgb import SmartBot
 
 basicConfig(level=DEBUG, format="%(levelname)s %(name)s %(lineno)d %(message)s")
@@ -22,8 +21,11 @@ env_file = Path(__file__).parent.with_name(".env")
 errors_file = Path(__file__).with_name("card_errors.yml")
 load_dotenv(env_file, override=True)
 VALID_KEY = getenv("VALID_KEY")
-_md = MarkdownBot(VALID_KEY)
-_COL = [_md.green, _md.gray, _md.orange]
+bot = SmartBot(VALID_KEY)
+_COL = [
+    bot.markdown_feature.green, bot.markdown_feature.gray,
+    bot.markdown_feature.orange
+]
 _COL = "".join(_COL[idx % 3](ltr) for idx, ltr in enumerate("colorful"))
 TEST_VALID_MARKDOWN = f"""
 # TESTING
@@ -147,12 +149,26 @@ def main():  # pragma: no cover
     For unit testing
     :return:
     """
-    bot = SmartBot(getenv("VALID_KEY"))
-    print(bot)
-    print(bot._MD_REGEXES)
-    print(bot._verify_markdown(TEST_VALID_MARKDOWN))
-    print(bot._verify_markdown("This is not #markdown"))
-    result = bot.send(TEST_VALID_MARKDOWN)
+    test = {
+        "main_title": {
+            "title": "无效ELB清理通知"
+        },
+        "sub_title_text": "以下ELB可能已失效或未正常使用, 请及时检查清理, 避免浪费",
+        "horizontal_content_list": [{
+            "keyname": "邀请人",
+            "value": "张三"
+        }, {
+            "keyname": "企微官网",
+            "value": "点击访问",
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi"
+        }],
+        "card_action": {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+        }
+    }
+    result = bot.send(**test)
     print(result)
 
 

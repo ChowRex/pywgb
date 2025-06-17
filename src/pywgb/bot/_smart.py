@@ -39,6 +39,10 @@ class SmartBot(AbstractBot):
         rf'<font color="({"|".join(_Colors)})">[^<]+</font>',  # Color
     ]
 
+    def __init__(self, key: str):
+        super().__init__(key)
+        self._md_bot = MarkdownBot(key)
+
     @property
     def _doc_key(self) -> str:
         return "如何使用群机器人"
@@ -162,3 +166,11 @@ class SmartBot(AbstractBot):
             bot = self._convert_arguments(bot_type)
         result = bot.send(msg, articles=articles, file_path=file_path, **kwargs)
         return result
+
+    @property
+    def markdown_feature(self) -> MarkdownBot:
+        """
+        Return all supported Markdown features instance.
+        :return: MarkdownBot instance.
+        """
+        return self._md_bot
