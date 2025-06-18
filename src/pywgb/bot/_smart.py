@@ -238,10 +238,4 @@ class SmartBot(AbstractBot):
             """
             return MarkdownBotV2.list2table
 
-    @property
-    def markdown_feature(self) -> _MarkdownFeatureProxy:
-        """
-        Return all supported Markdown features instance.
-        :return: MarkdownBot instance.
-        """
-        return self._MarkdownFeatureProxy()
+    markdown_feature = _MarkdownFeatureProxy()

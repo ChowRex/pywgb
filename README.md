@@ -317,4 +317,5 @@ bot.send(file_path=image)
 - [x] v1.0.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 - [x] v1.0.1: 🐛 Fix some bugs and fulfill coverage.
 - [x] v1.0.2: 🆕 Add `Markdown_v2` type support.
+- [x] v1.0.3: 🐛 Fix `Markdown_v2` attribute `markdown_feature` to class method.
 
