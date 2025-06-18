@@ -16,8 +16,8 @@ from urllib.parse import urlparse, unquote
 from dotenv import load_dotenv
 
 # pylint: disable=import-error
-from pywgb import SmartBot
-from tests.test_main import TEST_VALID_ARTICLES
+from src.pywgb import SmartBot
+from tests.test_main import TEST_VALID_ARTICLES, TEST_VALID_MARKDOWN_V2
 from tests.test_main import TEST_VALID_MARKDOWN
 from tests.test_main import TEST_VALID_NEWS_CARD
 from tests.test_main import TEST_VALID_TEXT_CARD
@@ -53,6 +53,7 @@ def test_send() -> None:
             "mentioned_list": ["@all"]
         }),
         "markdown": ((TEST_VALID_MARKDOWN,), {}),
+        "markdown_v2": ((TEST_VALID_MARKDOWN_V2,), {}),
         "news": ((), {
             "articles": TEST_VALID_ARTICLES
         }),

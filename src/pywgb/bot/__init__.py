@@ -11,10 +11,12 @@ All bot classes
 from ._smart import TextBot, MarkdownBot, ImageBot
 from ._smart import NewsBot, FileBot, VoiceBot
 from ._smart import TextCardBot, NewsCardBot, SmartBot
+from ._smart import MarkdownBotV2
 
 __all__ = [
     "TextBot",
     "MarkdownBot",
+    "MarkdownBotV2",
     "ImageBot",
     "NewsBot",
     "FileBot",

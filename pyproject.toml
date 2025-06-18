@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pywgb"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
     { name="Rex Zhou", email="879582094@qq.com" },
 ]
@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.8,<3.13"
 dependencies = [
     "requests>=2.25.0",
     "jmespath>=1.0.1",

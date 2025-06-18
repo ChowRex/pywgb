@@ -316,4 +316,5 @@ bot.send(file_path=image)
     - Fully test SmartBot class
 - [x] v1.0.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
 - [x] v1.0.1: 🐛 Fix some bugs and fulfill coverage.
+- [x] v1.0.2: 🆕 Add `Markdown_v2` type support.
 

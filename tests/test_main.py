@@ -34,6 +34,48 @@ TEST_VALID_MARKDOWN = f"""
 
 This is a {_COL} Markdown message
 """
+_TABLE = [
+    ["Name", "Gender", "Title"],
+    ["Julia", "Female", "Accounting"],
+    ["Jess", "Female", "Reception"],
+    ["Tom", "Male", "Manager"],
+    ["Grance", "Male", "Testing"],
+    ["Rex", "Male", "DevOps"],
+]
+TEST_VALID_MARKDOWN_V2 = f"""
+# TESTING v2
+
+*Italics*
+
+> Author: **Rex**
+>> Version: v2
+>>> Peace and love
+
+---
+
+- Unordered List 1
+- Unordered List 2
+  - Unordered List 2.1
+  - Unordered List 2.2
+1. Ordered List 1
+2. Ordered List 2
+
+![Picture](https://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png)
+
+```
+There is a test code block.
+```
+
+Here is a empty string when the table is less than 2 rows.
+
+{bot.markdown_feature.list2table(_TABLE[:1])}
+
+Here is a test table.
+
+{bot.markdown_feature.list2table(_TABLE)}
+
+"""
+
 TEST_VALID_ARTICLES = [{
     "title":
         "中秋节礼品领取",
@@ -149,26 +191,7 @@ def main():  # pragma: no cover
     For unit testing
     :return:
     """
-    test = {
-        "main_title": {
-            "title": "无效ELB清理通知"
-        },
-        "sub_title_text": "以下ELB可能已失效或未正常使用, 请及时检查清理, 避免浪费",
-        "horizontal_content_list": [{
-            "keyname": "邀请人",
-            "value": "张三"
-        }, {
-            "keyname": "企微官网",
-            "value": "点击访问",
-            "type": 1,
-            "url": "https://work.weixin.qq.com/?from=openApi"
-        }],
-        "card_action": {
-            "type": 1,
-            "url": "https://work.weixin.qq.com/?from=openApi",
-        }
-    }
-    result = bot.send(**test)
+    result = bot.send(TEST_VALID_MARKDOWN)
     print(result)
 
 

@@ -9,13 +9,31 @@ Text type message sender
 """
 
 from ._abstract import ConvertedData, AbstractBot
-from .markdown import MarkdownBot
+
+
+def check_args(*args, maximum: int = 2048) -> None:
+    """
+    Check args, raise exception if invalid.
+    :param args: Positional arguments.
+    :param maximum: Maximum length of content.
+    :return:
+    """
+    try:
+        msg = args[0]
+    except IndexError as error:
+        raise ValueError("The msg parameter is required.") from error
+    if not msg:
+        raise ValueError("Can't send empty message.")
+    # Check then message length
+    if len(str(msg).encode("utf-8")) > maximum:
+        raise ValueError(f"The msg parameter is too long (>{max} bytes).")
 
 
 class TextBot(AbstractBot):
     """Text type message Wecom Group Bot"""
 
     _OPTIONAL_ARGS = ["mentioned_list", "mentioned_mobile_list"]
+    _MAX_LENGTH = 2048
 
     @property
     def _doc_key(self) -> str:
@@ -28,8 +46,7 @@ class TextBot(AbstractBot):
         :param kwargs: Keyword arguments.
         :return:
         """
-        # pylint: disable=protected-access
-        MarkdownBot(self.key)._verify_arguments(*args, **kwargs)
+        check_args(*args, maximum=self._MAX_LENGTH)
         for optional in self._OPTIONAL_ARGS:
             if optional not in kwargs:
                 continue

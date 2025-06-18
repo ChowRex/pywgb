@@ -65,6 +65,9 @@ def test_verify_text_error() -> None:
     with raises(ValueError) as error:
         bot.send("")
     assert "Can't send empty message" in str(error.value)
+    with raises(ValueError) as error:
+        bot.send("1" * 2049)
+    assert "The msg parameter is too long" in str(error.value)
     err_msg = "parameter should be a list of strings"
     tests = [
         [123],

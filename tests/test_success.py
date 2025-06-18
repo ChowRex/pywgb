@@ -20,8 +20,8 @@ from pytest import raises
 # pylint: disable=import-error
 from src.pywgb.bot import TextBot, MarkdownBot, NewsBot
 from src.pywgb.bot import ImageBot, VoiceBot, FileBot
-from src.pywgb.bot import TextCardBot, NewsCardBot
-from tests.test_main import VALID_KEY, env_file
+from src.pywgb.bot import TextCardBot, NewsCardBot, MarkdownBotV2
+from tests.test_main import VALID_KEY, env_file, TEST_VALID_MARKDOWN_V2
 from tests.test_main import TEST_VALID_MARKDOWN
 from tests.test_main import TEST_VALID_ARTICLES
 from tests.test_main import TEST_VALID_TEXT_CARD
@@ -65,6 +65,17 @@ def test_markdown_initial() -> None:
     """
     # Verify valid key and url
     bot = MarkdownBot(VALID_KEY)
+    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert VALID_KEY == bot.key
+
+
+def test_markdown_v2_initial() -> None:
+    """
+    Test MarkdownBotV2 initialisation.
+    :return:
+    """
+    # Verify valid key and url
+    bot = MarkdownBotV2(VALID_KEY)
     assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
@@ -152,6 +163,11 @@ def test_basic_send() -> None:
     bot = MarkdownBot(getenv("VALID_KEY"))
     print(bot)
     result = bot.send(TEST_VALID_MARKDOWN)
+    print(result)
+    assert result["errcode"] == 0
+    bot = MarkdownBotV2(getenv("VALID_KEY"))
+    print(bot)
+    result = bot.send(TEST_VALID_MARKDOWN_V2)
     print(result)
     assert result["errcode"] == 0
     bot = ImageBot(getenv("VALID_KEY"))

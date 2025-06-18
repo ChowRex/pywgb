@@ -9,61 +9,96 @@ Smart bot
 """
 from pathlib import Path
 from re import compile as re_compile, MULTILINE
-from typing import Dict, List, Type, TypeVar
+from typing import Dict, List, Type, TypeVar, Union, Callable
 
-from .text import TextBot
-from .markdown import MarkdownBot
-from .image import ImageBot
-from .news import NewsBot
-from .file import FileBot
-from .voice import VoiceBot
-from .template_card.text import TextCardBot
-from .template_card.news import NewsCardBot
 from ._abstract import AbstractBot, FilePathLike
+from .file import FileBot
+from .image import ImageBot
+from .markdown import MarkdownBot, MarkdownBotV2
+from .news import NewsBot
+from .template_card.news import NewsCardBot
+from .template_card.text import TextCardBot
+from .text import TextBot
+from .voice import VoiceBot
 from .._deco import verify_file
 
 # pylint: disable=protected-access
-_Colors: List[str] = MarkdownBot._Color.get_valid_codes()
+_Colors: List[str] = [_.lower() for _ in MarkdownBot._Color.get_valid_codes()]
 _BotT = TypeVar('_BotT', bound='AbstractBot')
 
 
 class SmartBot(AbstractBot):
     """Smart Wecom Group Bot"""
 
-    _MD_REGEXES: List[str] = [
+    _MD_COMMON_REGEXES: List[str] = [
         r'^#{1,6}\s+.+$',  # Title
         r'\*\*.+\*\*',  # Bold
-        r'\[[^\]]+\]\([^\)]+\)',  # Link
         r'`[^`]+`',  # Inner line code
+        r'\[[^\]]+\]\([^\)]+\)',  # Link
         r'^>\s+.+$',  # Reference
+    ]
+    _MD_REGEXES: List[str] = [
         rf'<font color="({"|".join(_Colors)})">[^<]+</font>',  # Color
     ]
-
-    def __init__(self, key: str):
-        super().__init__(key)
-        self._md_bot = MarkdownBot(key)
+    _MDv2_REGEXES: List[str] = [
+        *_MD_COMMON_REGEXES,
+        r'\*.+\*',  # Italics
+        r'^(\s*[-*+]\s+.+(\n\s{2,}\S.*)*)+$',  # Unordered list
+        r'^\d+\.\s+.+$',  # Ordered List
+        r'!\[[^\]]+\]\([^\)]+\)',  # Picture
+        r'^(>+) .+$',  # References (multi-level support)
+        r'^-{3,}$',  # Dividing line
+        r'^```[\s\S]+?```$',  # Code block
+        r'^\|.+\|(\n\|?[-:]+[-|: ]+)+\n(\|.+\|)+$',  # Table
+    ]
 
     @property
     def _doc_key(self) -> str:
         return "如何使用群机器人"
 
-    def _verify_markdown(self, string: str) -> bool:
+    def _verify_markdown(
+            self,
+            string: str) -> Union[Type[MarkdownBot], Type[MarkdownBotV2], bool]:
         r"""
         Verify whether the string is Markdown format.
 
-        - Title 1 - 6:  r'^#{1,6}\s+.+$'
-        - Bold:         r'\*\*.+\*\*'
-        - Link:         r'\[[^\]]+\]\([^\)]+\)'
-        - Code:         r'`[^`]+`'
-        - Reference:    r'^>\s+.+$'
-        - Color:        r'<font color="(info|comment|warning)">[^<]+</font>'
+        For v1 version:
+        - Title 1 - 6:                  r'^#{1,6}\s+.+$'
+        - Bold:                         r'\*\*.+\*\*'
+        - Link:                         r'\[[^\]]+\]\([^\)]+\)'
+        - Code:                         r'`[^`]+`'
+        - Reference:                    r'^>\s+.+$'
+        - Color (** Uniq feature **):   r'<font color="(info|comment|warning)">[^<]+</font>'
+
+        For v2 version:
+        - Title 1 - 6:          r'^#{1,6}\s+.+$'
+        - Bold:                 r'\*\*.+\*\*'
+        - Link:                 r'\[[^\]]+\]\([^\)]+\)'
+        - Code:                 r'`[^`]+`'
+        - Italics:              r'\*.+\*'
+        - Unordered list:       r'^(\s*[-*+]\s+.+(\n\s{2,}\S.*)*)+$'
+        - Ordered List:         r'^\d+\.\s+.+$'
+        - Picture:              r'!\[[^\]]+\]\([^\)]+\)'
+        - References (multi):   r'^(>+) .+$'
+        - Dividing line:        r'^-{3,}$'
+        - Code block:           r'^```[\s\S]+?```$'
+        - Table:                r'^\|.+\|(\n\|?[-:]+[-|: ]+)+\n(\|.+\|)+$'
 
         :param string: Raw string.
         :return: Whether the string is Markdown format.
         """
+        # Top priority to detect the uniq feature for v1.
         regex = '|'.join(f'(?:{reg})' for reg in self._MD_REGEXES)
         regex = re_compile(r'(' + regex + r')', MULTILINE)
-        return bool(regex.search(string))
+        if regex.search(string):
+            return MarkdownBot
+        # Try to use v2 to match content
+        regex = '|'.join(f'(?:{reg})' for reg in self._MDv2_REGEXES)
+        regex = re_compile(r'(' + regex + r')', MULTILINE)
+        if regex.search(string):
+            return MarkdownBotV2
+        # Return `False` when can't match content
+        return False
 
     def _guess_message_bot(self, *args, **kwargs) -> Type[_BotT]:
         """
@@ -74,8 +109,8 @@ class SmartBot(AbstractBot):
         """
         if "mentioned_list" in kwargs or "mentioned_mobile_list" in kwargs:
             return TextBot
-        if self._verify_markdown(args[0]):
-            return MarkdownBot
+        if bot := self._verify_markdown(args[0]):
+            return bot
         return TextBot
 
     @verify_file
@@ -167,10 +202,46 @@ class SmartBot(AbstractBot):
         result = bot.send(msg, articles=articles, file_path=file_path, **kwargs)
         return result
 
+    # pylint: disable=too-few-public-methods
+    class _MarkdownFeatureProxy:
+        """Proxy that routes method calls to appropriate Markdown type."""
+
+        @property
+        def green(self) -> Callable:
+            """
+            Return v1 feature.
+            :return:
+            """
+            return MarkdownBot.green
+
+        @property
+        def gray(self) -> Callable:
+            """
+            Return v1 feature.
+            :return:
+            """
+            return MarkdownBot.gray
+
+        @property
+        def orange(self) -> Callable:
+            """
+            Return v1 feature.
+            :return:
+            """
+            return MarkdownBot.orange
+
+        @property
+        def list2table(self) -> Callable:
+            """
+            Return v2 feature.
+            :return:
+            """
+            return MarkdownBotV2.list2table
+
     @property
-    def markdown_feature(self) -> MarkdownBot:
+    def markdown_feature(self) -> _MarkdownFeatureProxy:
         """
         Return all supported Markdown features instance.
         :return: MarkdownBot instance.
         """
-        return self._md_bot
+        return self._MarkdownFeatureProxy()
