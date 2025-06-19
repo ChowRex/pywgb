@@ -13,6 +13,12 @@ Wecom(A.K.A. WeChat Work) Group Bot python API. [![codecov](https://codecov.io/g
 
 ## How to use
 
+### Limitation
+
+> ⚠️ **Warning**: Request rate is limited.
+>
+> Each bot CANNOT send more than **20** messages/minute. See [here](https://developer.work.weixin.qq.com/document/path/99110#%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E9%A2%91%E7%8E%87%E9%99%90%E5%88%B6).
+
 ### Pre-conditions
 
 1. Create a [Wecom Group Bot](https://qinglian.tencent.com/help/docs/2YhR-6/).
@@ -45,7 +51,7 @@ bot = SmartBot(KEY)
 
 #### Basic usage
 
-##### Text
+##### [Text](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E6%9C%AC%E7%B1%BB%E5%9E%8B)
 
 ```python
 msg = "This is a test Text message."
@@ -71,15 +77,36 @@ bot.send(msg, **kwargs)
 
 ```
 
-##### Markdown
+##### [Markdown](https://developer.work.weixin.qq.com/document/path/99110#markdown%E7%B1%BB%E5%9E%8B)
+
+> Supported Markdown syntax:
+>
+> - Title (1-6 levels)
+> - Bold
+> - Link
+> - Inner line code
+> - Single level reference
+>
+> - [***<u>Unique feature</u>***] Coloured(green/gray/orange) text.
 
 ```python
 col = [bot.markdown_feature.green, bot.markdown_feature.gray, bot.markdown_feature.orange]
 markdown = ''.join(col[idx % 3](ltr) for idx, ltr in enumerate("colorful"))
 markdown = f"""
-# TESTING
+# L1 title
+## L2 title
+### L3 title
+#### L4 title
+##### L5 title
+###### L6 title
 
-> Author: **Rex**
+Author: **Rex** (bold font)
+
+Link: [Go Bing](https://bing.com)
+
+Inner line `code`
+
+> This is a test reference
 
 This is a {markdown} Markdown message
 """
@@ -87,7 +114,71 @@ bot.send(markdown)
 
 ```
 
-##### News
+##### [Markdown_v2](https://developer.work.weixin.qq.com/document/path/99110#markdown-v2%E7%B1%BB%E5%9E%8B)
+
+> Compare missing features in version v1:
+>
+> - **NOT** support for coloured text.
+>
+> Additional syntax support from v1:
+>
+> - Italics
+> - Multi-level list (unordered/ordered)
+> - Multi-level reference (1-3 levels)
+> - Picture
+> - Split line
+> - Separate code block
+> - Table
+
+````python
+_table = [
+    ["Name", "Gender", "Title"],
+    ["Julia", "Female", "Accounting"],
+    ["Jess", "Female", "Reception"],
+    ["Tom", "Male", "Manager"],
+    ["Grance", "Male", "Testing"],
+    ["Rex", "Male", "DevOps"],
+]
+markdown_v2 = f"""
+# Here are the enhancements compared to v1
+
+*Italics*
+
+- Unordered List 1
+- Unordered List 2
+  - Unordered List 2.1
+  - Unordered List 2.2
+1. Ordered List 1
+2. Ordered List 2
+
+> L1 reference
+>> L2 reference
+>>> L3 reference
+
+![Picture](https://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png)
+
+A split line will appear below
+
+---
+
+```
+There is a test code block.
+```
+
+Here is a empty string when the table is less than 2 rows.
+
+{bot.markdown_feature.list2table(_table[:1])}
+
+Here is a test table.
+
+{bot.markdown_feature.list2table(_table)}
+
+"""
+bot.send(markdown_v2)
+
+````
+
+##### [News](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E7%89%87%E7%B1%BB%E5%9E%8B)
 
 ```python
 articles = [
@@ -103,7 +194,7 @@ bot.send(articles=articles)
 
 ```
 
-##### Image
+##### [Image](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E6%96%87%E7%B1%BB%E5%9E%8B)
 
 ```python
 image = "Path/To/Your/Image.png" or "Path/To/Your/Image.jpg"
@@ -111,7 +202,7 @@ bot.send(file_path=image)
 
 ```
 
-##### Voice
+##### [Voice](https://developer.work.weixin.qq.com/document/path/99110#%E8%AF%AD%E9%9F%B3%E7%B1%BB%E5%9E%8B)
 
 📢 You must install **FULL** version to avoid warning prompt.
 
@@ -121,7 +212,7 @@ bot.send(file_path=voice)
 
 ```
 
-##### File
+##### [File](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B)
 
 ```python
 file = "Path/To/Your/File.suffix"
@@ -131,7 +222,7 @@ bot.send(file_path=file)
 
 #### Advanced usage
 
-##### Upload temporary media *(Materials only available in 3 days)*
+##### [Upload temporary media](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%8E%A5%E5%8F%A3) *(Materials only available in 3 days)*
 
 ```python
 file = "Path/To/Your/File.suffix"
@@ -140,7 +231,7 @@ print(media_id)
 
 ```
 
-##### TextTemplateCard *(Need more detail? click [here](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E6%9C%AC%E9%80%9A%E7%9F%A5%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87).)*
+##### [TextTemplateCard](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E6%9C%AC%E9%80%9A%E7%9F%A5%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87)
 
 ```python
 kwargs = {
@@ -182,7 +273,7 @@ bot.send(**kwargs)
 
 ```
 
-##### NewsTemplateCard *(Need more detail? click [here](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E6%96%87%E5%B1%95%E7%A4%BA%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87).)*
+##### [NewsTemplateCard](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E6%96%87%E5%B1%95%E7%A4%BA%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87)
 
 ```python
 kwargs = {
@@ -254,8 +345,9 @@ bot.send(**kwargs)
 You can refer below to use specify kind of bot.
 
 ```python
-from pywgb.bot import TextBot, MarkdownBot, ImageBot, NewsBot
-from pywgb.bot import FileBot, VoiceBot, TextCardBot, NewsCardBot
+from pywgb.bot import TextBot, MarkdownBot, MarkdownBotV2
+from pywgb.bot import ImageBot, NewsBot, FileBot
+from pywgb.bot import VoiceBot, TextCardBot, NewsCardBot
 
 KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
 
@@ -318,4 +410,5 @@ bot.send(file_path=image)
 - [x] v1.0.1: 🐛 Fix some bugs and fulfill coverage.
 - [x] v1.0.2: 🆕 Add `Markdown_v2` type support.
 - [x] v1.0.3: 🐛 Fix `Markdown_v2` attribute `markdown_feature` to class method.
+- [x] v1.0.4: 📝 Add content into README.md
 
