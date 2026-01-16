@@ -42,7 +42,11 @@ def test_text_initial() -> None:
     print("Check valid url:", valid_url)
     # Verify valid key and url
     bot = TextBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        # pylint: disable=protected-access
+        urlparse(unquote(bot.doc)).fragment
+        == bot._doc_key
+    )
     assert VALID_KEY == bot.key
     assert f"TextBot({VALID_KEY})" == str(bot)
     assert valid_url.split("=")[-1] == TextBot(valid_url).key
@@ -65,7 +69,11 @@ def test_markdown_initial() -> None:
     """
     # Verify valid key and url
     bot = MarkdownBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        # pylint: disable=protected-access
+        urlparse(unquote(bot.doc)).fragment
+        == bot._doc_key
+    )
     assert VALID_KEY == bot.key
 
 
@@ -76,7 +84,11 @@ def test_markdown_v2_initial() -> None:
     """
     # Verify valid key and url
     bot = MarkdownBotV2(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        # pylint: disable=protected-access
+        urlparse(unquote(bot.doc)).fragment
+        == bot._doc_key
+    )
     assert VALID_KEY == bot.key
 
 
@@ -87,7 +99,11 @@ def test_image_initial() -> None:
     """
     # Verify valid key and url
     bot = ImageBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        # pylint: disable=protected-access
+        urlparse(unquote(bot.doc)).fragment
+        == bot._doc_key
+    )
     assert VALID_KEY == bot.key
 
 
@@ -98,7 +114,11 @@ def test_news_initial() -> None:
     """
     # Verify valid key and url
     bot = NewsBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        # pylint: disable=protected-access
+        urlparse(unquote(bot.doc)).fragment
+        == bot._doc_key
+    )
     assert VALID_KEY == bot.key
 
 
@@ -124,7 +144,9 @@ def test_voice_initial() -> None:
     """
     # Verify valid key and url
     bot = VoiceBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        urlparse(unquote(bot.doc)).fragment == bot._doc_key
+    )  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
@@ -135,7 +157,9 @@ def test_text_card_initial() -> None:
     """
     # Verify valid key and url
     bot = TextCardBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        urlparse(unquote(bot.doc)).fragment == bot._doc_key
+    )  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 
@@ -146,7 +170,9 @@ def test_news_card_initial() -> None:
     """
     # Verify valid key and url
     bot = NewsCardBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        urlparse(unquote(bot.doc)).fragment == bot._doc_key
+    )  # pylint: disable=protected-access
     assert VALID_KEY == bot.key
 
 

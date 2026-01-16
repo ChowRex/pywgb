@@ -23,8 +23,9 @@ load_dotenv(env_file, override=True)
 VALID_KEY = getenv("VALID_KEY")
 bot = SmartBot(VALID_KEY)
 _COL = [
-    bot.markdown_feature.green, bot.markdown_feature.gray,
-    bot.markdown_feature.orange
+    bot.markdown_feature.green,
+    bot.markdown_feature.gray,
+    bot.markdown_feature.orange,
 ]
 _COL = "".join(_COL[idx % 3](ltr) for idx, ltr in enumerate("colorful"))
 TEST_VALID_MARKDOWN = f"""
@@ -76,81 +77,63 @@ Here is a test table.
 
 """
 
-TEST_VALID_ARTICLES = [{
-    "title":
-        "中秋节礼品领取",
-    "description":
-        "今年中秋节公司有豪礼相送",
-    "url":
-        "www.qq.com",
-    "picurl":
-        "http://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png"
-}]
+TEST_VALID_ARTICLES = [
+    {
+        "title": "中秋节礼品领取",
+        "description": "今年中秋节公司有豪礼相送",
+        "url": "www.qq.com",
+        # pylint: disable=line-too-long
+        "picurl": "http://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png",
+    }
+]
 TEST_VALID_TEXT_CARD = {
-    "main_title": {
-        "title": "欢迎使用企业微信",
-        "desc": "您的好友正在邀请您加入企业微信"
-    },
-    "emphasis_content": {
-        "title": "100",
-        "desc": "数据含义"
-    },
+    "main_title": {"title": "欢迎使用企业微信", "desc": "您的好友正在邀请您加入企业微信"},
+    "emphasis_content": {"title": "100", "desc": "数据含义"},
     "quote_area": {
         "type": 1,
         "url": "https://work.weixin.qq.com/?from=openApi",
         "title": "引用文本标题",
-        "quote_text": "Jack：企业微信真的很好用~\nBalian：超级好的一款软件！"
+        "quote_text": "Jack：企业微信真的很好用~\nBalian：超级好的一款软件！",
     },
     "sub_title_text": "下载企业微信还能抢红包！",
-    "horizontal_content_list": [{
-        "keyname": "邀请人",
-        "value": "张三"
-    }, {
-        "keyname": "企微官网",
-        "value": "点击访问",
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi"
-    }],
-    "jump_list": [{
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi",
-        "title": "企业微信官网"
-    }],
+    "horizontal_content_list": [
+        {"keyname": "邀请人", "value": "张三"},
+        {
+            "keyname": "企微官网",
+            "value": "点击访问",
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+        },
+    ],
+    "jump_list": [
+        {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+            "title": "企业微信官网",
+        }
+    ],
     "card_action": {
         "type": 1,
         "url": "https://work.weixin.qq.com/?from=openApi",
-    }
+    },
 }
 TEST_VALID_NEWS_CARD = {
     "source": {
-        "icon_url":
-            "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
-        "desc":
-            "企业微信",
-        "desc_color":
-            0
+        "icon_url": "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
+        "desc": "企业微信",
+        "desc_color": 0,
     },
-    "main_title": {
-        "title": "欢迎使用企业微信",
-        "desc": "您的好友正在邀请您加入企业微信"
-    },
+    "main_title": {"title": "欢迎使用企业微信", "desc": "您的好友正在邀请您加入企业微信"},
     "card_image": {
-        "url":
-            "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
-        "aspect_ratio":
-            2.25
+        "url": "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
+        "aspect_ratio": 2.25,
     },
     "image_text_area": {
-        "type":
-            1,
-        "url":
-            "https://work.weixin.qq.com",
-        "title":
-            "欢迎使用企业微信",
-        "desc":
-            "您的好友正在邀请您加入企业微信",
-        "image_url":
-            "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0"
+        "type": 1,
+        "url": "https://work.weixin.qq.com",
+        "title": "欢迎使用企业微信",
+        "desc": "您的好友正在邀请您加入企业微信",
+        "image_url": "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
     },
     "quote_area": {
         "type": 1,
@@ -158,30 +141,26 @@ TEST_VALID_NEWS_CARD = {
         "appid": "APPID",
         "pagepath": "PAGEPATH",
         "title": "引用文本标题",
-        "quote_text": "Jack：企业微信真的很好用~\nBalian：超级好的一款软件！"
+        "quote_text": "Jack：企业微信真的很好用~\nBalian：超级好的一款软件！",
     },
-    "vertical_content_list": [{
-        "title": "惊喜红包等你来拿",
-        "desc": "下载企业微信还能抢红包！"
-    }],
-    "horizontal_content_list": [{
-        "keyname": "邀请人",
-        "value": "张三"
-    }, {
-        "keyname": "企微官网",
-        "value": "点击访问",
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi"
-    }],
-    "jump_list": [{
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi",
-        "title": "企业微信官网"
-    }],
-    "card_action": {
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi"
-    }
+    "vertical_content_list": [{"title": "惊喜红包等你来拿", "desc": "下载企业微信还能抢红包！"}],
+    "horizontal_content_list": [
+        {"keyname": "邀请人", "value": "张三"},
+        {
+            "keyname": "企微官网",
+            "value": "点击访问",
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+        },
+    ],
+    "jump_list": [
+        {
+            "type": 1,
+            "url": "https://work.weixin.qq.com/?from=openApi",
+            "title": "企业微信官网",
+        }
+    ],
+    "card_action": {"type": 1, "url": "https://work.weixin.qq.com/?from=openApi"},
 }
 
 

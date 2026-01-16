@@ -1,414 +1,329 @@
 # pywgb
-Wecom(A.K.A. WeChat Work) Group Bot python API. [![codecov](https://codecov.io/gh/ChowRex/pywgb/graph/badge.svg?token=1SDIUB46RU)](https://codecov.io/gh/ChowRex/pywgb)
 
-## Homepage
+[![PyPI version](https://img.shields.io/pypi/v/pywgb)](https://pypi.org/project/pywgb/)
+[![Python versions](https://img.shields.io/pypi/pyversions/pywgb)](https://pypi.org/project/pywgb/)
+[![codecov](https://codecov.io/gh/ChowRex/pywgb/graph/badge.svg?token=1SDIUB46RU)](https://codecov.io/gh/ChowRex/pywgb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-### Github
+Wecom (WeChat Work) Group Bot Python API - A comprehensive and easy-to-use library for sending messages to Wecom group bots.
 
-> [ChowRex/pywgb: Wecom(A.K.A Wechat Work) Group Bot python API.](https://github.com/ChowRex/pywgb)
+## ✨ Features
 
-### Pypi
+- 🤖 **Smart Bot** - Automatic message type detection
+- 📝 **Multiple Message Types** - Text, Markdown (v1 & v2), Images, Files, Voice, News, Template Cards
+- 🎨 **Rich Formatting** - Colored text, tables, lists, code blocks
+- 🔒 **Rate Limiting** - Built-in overheat detection (20 msg/min)
+- ✅ **Type Hints** - Full type annotation support
+- 🧪 **Well Tested** - 100% test coverage
+- 📚 **Comprehensive Docs** - Detailed documentation and examples
 
-> [pywgb · PyPI](https://pypi.org/project/pywgb/)
+## 📦 Installation
 
-## How to use
+```bash
+# Basic installation (text, markdown, images, news, cards)
+pip install pywgb
 
-### Limitation
+# Full installation (includes voice message support with pydub)
+pip install "pywgb[all]"
+```
 
-> ⚠️ **Warning**: Request rate is limited.
->
-> Each bot CANNOT send more than **20** messages/minute. See [here](https://developer.work.weixin.qq.com/document/path/99110#%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E9%A2%91%E7%8E%87%E9%99%90%E5%88%B6).
+**Requirements**: Python 3.8+
 
-### Pre-conditions
+## 🚀 Quick Start
 
-1. Create a [Wecom Group Bot](https://qinglian.tencent.com/help/docs/2YhR-6/).
+### 1. Get Your Webhook Key
 
-2. Copy the webhook URL or just the `key`. It **MUST** contains an [UUID (8-4-4-4-12)](https://en.wikipedia.org/wiki/Universally_unique_identifier), like:
+1. Create a [Wecom Group Bot](https://qinglian.tencent.com/help/docs/2YhR-6/)
+2. Copy the webhook URL or just the key (UUID format):
+   - Full URL: `https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=YOUR-UUID-KEY`
+   - Or just: `YOUR-UUID-KEY`
 
-   - `Webhook`: *https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=UUID*
-   - `Key`: *UUID*
-
-3. Install this package: 
-
-    ```bash
-    # Normally use this if you won't send voice message
-    pip install -U pywgb
-    # You can install full version by this
-    pip install -U "pywgb[all]"
-    ```
-
-### Send messages
-
-Create a instance of `SmartBot`
+### 2. Send Your First Message
 
 ```python
 from pywgb import SmartBot
 
-KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
-bot = SmartBot(KEY)
+# Initialize bot with your key
+bot = SmartBot("YOUR-UUID-KEY")
 
+# Send a simple text message
+bot.send("Hello, World!")
 ```
 
-#### Basic usage
+That's it! 🎉
 
-##### [Text](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E6%9C%AC%E7%B1%BB%E5%9E%8B)
+## 📖 Usage Guide
+
+### Text Messages
 
 ```python
-msg = "This is a test Text message."
-bot.send(msg)
+from pywgb import SmartBot
 
-# If you want to send message and mention someone at the same time, refer this.
-kwargs = {
-  "mentioned_list": [
-    # If you know the userid
-    "userid",
-    # Use below for ALL people
-    "@all",
-  ],
-  "mentioned_mobile_list": [
-    # If you know the phone number
-    "13800001111",
-    # Use below for ALL people
-    "@all",
-  ]
-}
-msg = "Alert, this is an important message."
-bot.send(msg, **kwargs)
+bot = SmartBot("YOUR-KEY")
 
+# Simple text
+bot.send("This is a text message")
+
+# Text with @mentions
+bot.send(
+    "Important announcement!",
+    mentioned_list=["userid1", "@all"],  # @all mentions everyone
+    mentioned_mobile_list=["13800138000"]
+)
 ```
 
-##### [Markdown](https://developer.work.weixin.qq.com/document/path/99110#markdown%E7%B1%BB%E5%9E%8B)
+### Markdown Messages
 
-> Supported Markdown syntax:
->
-> - Title (1-6 levels)
-> - Bold
-> - Link
-> - Inner line code
-> - Single level reference
->
-> - [***<u>Unique feature</u>***] Coloured(green/gray/orange) text.
+#### Markdown v1 (with colored text)
 
 ```python
-col = [bot.markdown_feature.green, bot.markdown_feature.gray, bot.markdown_feature.orange]
-markdown = ''.join(col[idx % 3](ltr) for idx, ltr in enumerate("colorful"))
+# Colored text (unique feature!)
+status = bot.markdown_feature.green("Online")
+warning = bot.markdown_feature.orange("High Load")
+info = bot.markdown_feature.gray("Last updated: 2026-01-16")
+
 markdown = f"""
-# L1 title
-## L2 title
-### L3 title
-#### L4 title
-##### L5 title
-###### L6 title
+# Server Status Report
 
-Author: **Rex** (bold font)
+**Status**: {status}  
+**Warning**: {warning}  
+**Info**: {info}
 
-Link: [Go Bing](https://bing.com)
+> For more details, visit [Dashboard](https://example.com)
 
-Inner line `code`
-
-> This is a test reference
-
-This is a {markdown} Markdown message
+Inline `code` example
 """
-bot.send(markdown)
 
+bot.send(markdown)
 ```
 
-##### [Markdown_v2](https://developer.work.weixin.qq.com/document/path/99110#markdown-v2%E7%B1%BB%E5%9E%8B)
+**Supported syntax**: Titles (H1-H6), **Bold**, [Links](url), `inline code`, > quotes, colored text
 
-> Compare missing features in version v1:
->
-> - **NOT** support for coloured text.
->
-> Additional syntax support from v1:
->
-> - Italics
-> - Multi-level list (unordered/ordered)
-> - Multi-level reference (1-3 levels)
-> - Picture
-> - Split line
-> - Separate code block
-> - Table
+#### Markdown v2 (with tables and more)
 
-````python
-_table = [
-    ["Name", "Gender", "Title"],
-    ["Julia", "Female", "Accounting"],
-    ["Jess", "Female", "Reception"],
-    ["Tom", "Male", "Manager"],
-    ["Grance", "Male", "Testing"],
-    ["Rex", "Male", "DevOps"],
+```python
+# Create a table
+data = [
+    ["Name", "Status", "Score"],
+    ["Alice", "Active", "95"],
+    ["Bob", "Inactive", "87"],
+    ["Charlie", "Active", "92"]
 ]
+
 markdown_v2 = f"""
-# Here are the enhancements compared to v1
+# Team Performance
 
-*Italics*
+{bot.markdown_feature.list2table(data)}
 
-- Unordered List 1
-- Unordered List 2
-  - Unordered List 2.1
-  - Unordered List 2.2
-1. Ordered List 1
-2. Ordered List 2
+## Notes
+- *Important*: Review pending
+- **Deadline**: 2026-01-20
 
-> L1 reference
->> L2 reference
->>> L3 reference
-
-![Picture](https://res.mail.qq.com/node/ww/wwopenmng/images/independent/doc/test_pic_msg1.png)
-
-A split line will appear below
+> Main objective
+>> Sub-objective
 
 ---
 
+```python
+def hello():
+    print("Hello!")
 ```
-There is a test code block.
-```
 
-Here is a empty string when the table is less than 2 rows.
 
-{bot.markdown_feature.list2table(_table[:1])}
-
-Here is a test table.
-
-{bot.markdown_feature.list2table(_table)}
-
-"""
 bot.send(markdown_v2)
+```
 
-````
+**Additional syntax**: *Italics*, multi-level lists, tables, images, code blocks, horizontal rules
 
-##### [News](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E7%89%87%E7%B1%BB%E5%9E%8B)
+> **Note**: Markdown v2 does NOT support colored text. Choose v1 for colors, v2 for tables.
+
+### Images
+
+```python
+# Supported formats: PNG, JPG (max 2MB)
+bot.send(file_path="screenshot.png")
+```
+
+### Voice Messages
+
+```python
+# Requires full installation: pip install "pywgb[all]"
+# Format: AMR only (max 2MB, max 60 seconds)
+bot.send(file_path="audio.amr")
+```
+
+### Files
+
+```python
+# Any file format (5B < size < 20MB)
+bot.send(file_path="document.pdf")
+```
+
+### News Articles
 
 ```python
 articles = [
     {
-        "title": "This is a test news",
-        "description": "You can add description here",
-        "url": "www.tencent.com",
-        # Here is the link of picture
-        "picurl": "https://www.tencent.com/img/index/tencent_logo.png"
+        "title": "Breaking News",
+        "description": "Important update",
+        "url": "https://example.com/article",
+        "picurl": "https://example.com/image.jpg"
     },
+    # ... up to 8 articles
 ]
+
 bot.send(articles=articles)
-
 ```
 
-##### [Image](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E6%96%87%E7%B1%BB%E5%9E%8B)
+### Template Cards
+
+#### Text Card
 
 ```python
-image = "Path/To/Your/Image.png" or "Path/To/Your/Image.jpg"
-bot.send(file_path=image)
-
+bot.send(
+    main_title={"title": "Deployment Notification", "desc": "Production environment"},
+    emphasis_content={"title": "SUCCESS", "desc": "Status"},
+    sub_title_text="Deployed by: DevOps Team",
+    horizontal_content_list=[
+        {"keyname": "Version", "value": "v2.1.0"},
+        {"keyname": "Time", "value": "2026-01-16 15:00"}
+    ],
+    card_action={"type": 1, "url": "https://example.com/details"}
+)
 ```
 
-##### [Voice](https://developer.work.weixin.qq.com/document/path/99110#%E8%AF%AD%E9%9F%B3%E7%B1%BB%E5%9E%8B)
-
-📢 You must install **FULL** version to avoid warning prompt.
+#### News Card
 
 ```python
-voice = "Path/To/Your/Voice.amr"  # BE ADVISED: ONLY support amr file
-bot.send(file_path=voice)
-
+bot.send(
+    main_title={"title": "System Alert", "desc": "Monitoring report"},
+    card_image={"url": "https://example.com/chart.png", "aspect_ratio": 2.25},
+    image_text_area={
+        "type": 1,
+        "url": "https://example.com",
+        "title": "CPU Usage Alert",
+        "desc": "Current usage: 85%",
+        "image_url": "https://example.com/icon.png"
+    },
+    card_action={"type": 1, "url": "https://example.com/dashboard"}
+)
 ```
 
-##### [File](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E4%BB%B6%E7%B1%BB%E5%9E%8B)
+## 🔧 Advanced Usage
+
+### Upload Temporary Media
 
 ```python
-file = "Path/To/Your/File.suffix"
-bot.send(file_path=file)
-
+# Upload file and get media_id (valid for 3 days)
+media_id = bot.upload("document.pdf")
+print(f"Media ID: {media_id}")
 ```
 
-#### Advanced usage
-
-##### [Upload temporary media](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%8E%A5%E5%8F%A3) *(Materials only available in 3 days)*
+### Use Specific Bot Types
 
 ```python
-file = "Path/To/Your/File.suffix"
-media_id = bot.upload(file)
-print(media_id)
+from pywgb.bot import TextBot, MarkdownBot, ImageBot, FileBot
 
+# Use specific bot for better control
+text_bot = TextBot("YOUR-KEY")
+text_bot.send("Specific text message")
+
+# Send image as file (instead of image message)
+file_bot = FileBot("YOUR-KEY")
+file_bot.send(file_path="image.png")  # Sent as file, not image
 ```
 
-##### [TextTemplateCard](https://developer.work.weixin.qq.com/document/path/99110#%E6%96%87%E6%9C%AC%E9%80%9A%E7%9F%A5%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87)
+## ⚠️ Limitations
 
-```python
-kwargs = {
-    "main_title": {
-        "title": "Test message",
-        "desc": "This is a test template text card message"
-    },
-    "emphasis_content": {
-        "title": "100",
-        "desc": "No meaning"
-    },
-    "quote_area": {
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi",
-        "title": "Title reference",
-        "quote_text": "Hello\nWorld!"
-    },
-    "sub_title_text": "This is sub-title",
-    "horizontal_content_list": [{
-        "keyname": "Author",
-        "value": "Rex"
-    }, {
-        "keyname": "Google",
-        "value": "Click to go",
-        "type": 1,
-        "url": "https://google.com"
-    }],
-    "jump_list": [{
-        "type": 1,
-        "url": "https://bing.com",
-        "title": "Bing"
-    }],
-    "card_action": {
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi",
-    }
-}
-bot.send(**kwargs)
+| Type | Limit |
+|------|-------|
+| **Rate Limit** | 20 messages/minute per bot |
+| **Text** | Max 2048 bytes (UTF-8) |
+| **Markdown** | Max 4096 bytes (UTF-8) |
+| **Image** | PNG/JPG, max 2MB |
+| **Voice** | AMR only, max 2MB, max 60s |
+| **File** | 5B - 20MB |
+| **News** | Max 8 articles per message |
 
+> **Rate Limiting**: The library automatically handles rate limits with cooldown detection. When limit is exceeded, it waits and retries automatically.
+
+## 📚 Documentation
+
+- **GitHub**: [ChowRex/pywgb](https://github.com/ChowRex/pywgb)
+- **PyPI**: [pywgb](https://pypi.org/project/pywgb/)
+- **Official Wecom Docs** (Chinese): [群机器人配置说明](https://developer.work.weixin.qq.com/document/path/99110)
+- **API Reference**: See `docs/` directory or build with Sphinx
+
+### Build Documentation
+
+```bash
+pip install "pywgb[docs]"
+cd docs && make html
+open _build/html/index.html
 ```
 
-##### [NewsTemplateCard](https://developer.work.weixin.qq.com/document/path/99110#%E5%9B%BE%E6%96%87%E5%B1%95%E7%A4%BA%E6%A8%A1%E7%89%88%E5%8D%A1%E7%89%87)
+## 🧪 Development
 
-```python
-kwargs = {
-    "source": {
-        "icon_url":
-            "https://wework.qpic.cn/wwpic/252813_jOfDHtcISzuodLa_1629280209/0",
-        "desc":
-            "This is for testing",
-        "desc_color":
-            0
-    },
-    "main_title": {
-        "title": "Test message",
-        "desc": "This is a test template news card message"
-    },
-    "card_image": {
-        "url":
-            "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0",
-        "aspect_ratio":
-            2.25
-    },
-    "image_text_area": {
-        "type":
-            1,
-        "url":
-            "https://work.weixin.qq.com",
-        "title":
-            "Welcom to use pywgb",
-        "desc":
-            "This is a test message",
-        "image_url":
-            "https://wework.qpic.cn/wwpic/354393_4zpkKXd7SrGMvfg_1629280616/0"
-    },
-    "quote_area": {
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi",
-        "title": "Title reference",
-        "quote_text": "Hello\nWorld!"
-    },
-    "vertical_content_list": [{
-        "title": "Hi, there",
-        "desc": "Welcome to use"
-    }],
-    "horizontal_content_list": [{
-        "keyname": "Author",
-        "value": "Rex"
-    }, {
-        "keyname": "Google",
-        "value": "Click to go",
-        "type": 1,
-        "url": "https://google.com"
-    }],
-    "jump_list": [{
-        "type": 1,
-        "url": "https://bing.com",
-        "title": "Bing"
-    }],
-    "card_action": {
-        "type": 1,
-        "url": "https://work.weixin.qq.com/?from=openApi",
-    }
-}
-bot.send(**kwargs)
+### Run Tests
 
+```bash
+# Install dev dependencies
+pip install -e ".[test]"
+
+# Run tests with coverage
+pytest --cov=src/pywgb --cov-report=html -v
+
+# View coverage report
+open htmlcov/index.html
 ```
 
-#### Use the specified bot
+### Code Quality
 
-You can refer below to use specify kind of bot.
+- **Test Coverage**: 100%
+- **Type Hints**: Full support
+- **Code Style**: PEP 8 compliant
+- **Documentation**: Sphinx with Google-style docstrings
 
-```python
-from pywgb.bot import TextBot, MarkdownBot, MarkdownBotV2
-from pywgb.bot import ImageBot, NewsBot, FileBot
-from pywgb.bot import VoiceBot, TextCardBot, NewsCardBot
+## 🗺️ Roadmap
 
-KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
+- [x] v0.0.1-0.0.5: Initial release with basic message types
+- [x] v0.0.6-0.0.9: Add template cards and refactoring
+- [x] v0.1.0-0.1.2: Add SmartBot with auto-detection
+- [x] v1.0.0-1.0.4: Stable release with full features
+- [ ] v1.1.0: Performance optimizations (in progress)
+- [ ] v1.2.0: Enhanced documentation and examples
+- [ ] v2.0.0: Async support and additional features
 
-bot_type = TextBot
-bot = bot_type(Key)
-bot.send("Some thing here")
-```
+See [NEXT_STEPS.md](NEXT_STEPS.md) for detailed improvement plans.
 
-This might be useful when you want to send `voice`or `image` as a file *(SmartBot won't send image or voice as file)*.
+## 🤝 Contributing
 
-```python
-from pywgb.bot import FileBot
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-KEY = "PASTE_YOUR_KEY_OR_WEBHOOKURL_HERE"
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-voice = "Path/To/Your/Voice.amr"
-image = "Path/To/Your/Image.png" or "Path/To/Your/Image.jpg"
+## 📄 License
 
-bot = FileBot(KEY)
-bot.send(file_path=voice)
-bot.send(file_path=image)
-```
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Official Docs
+## 👤 Author
 
-> **Only Chinese** doc: [群机器人配置说明 - 文档 - 企业微信开发者中心](https://developer.work.weixin.qq.com/document/path/99110)
+**Rex Zhou**
+- Email: 879582094@qq.com
+- GitHub: [@ChowRex](https://github.com/ChowRex)
 
-## Roadmap
+## 🙏 Acknowledgments
 
-- [x] v0.0.1: 🎉 Initial project. Offering send `Text` and `Markdown` type message.
-- [x] v0.0.2: 🖼️ Add `Image` type message support;
+- Thanks to Tencent for providing the Wecom Group Bot API
+- Inspired by the need for a simple, Pythonic interface to Wecom bots
 
-  - Add overheat detect function and unified exception handling
-- [x] v0.0.3: 📰 Add `News` type message support;
+---
 
-  - Move bots into a new module: `bot`
-- [x] v0.0.4: 📂 Add `File` type message support;
+**Star ⭐ this repo if you find it helpful!**
 
-    - Refactor `bot` module
-- [x] v0.0.5: 🗣️ Add `Voice` type message support.
-    - Refactor `deco` module
-    - Add `verify_file` decorator
-    - Introverted parameters check errors
-    - Add more content into README.md
-- [x] v0.0.6: 🩹 Add `Voice` and `File` type size check.
-- [x] v0.0.7: 🗒️ Add `TextCard` type message support.
-- [x] v0.0.8: 🗃️ Add `NewsCard` type message support.
-- [x] v0.0.9: ♻️ Refactor code.
-- [x] v0.1.0: 🔧 Fix color bug when use markdown type
-- [x] v0.1.1: ⏺️ Refactor all code logic again, I don't like mess and complex.
-- [x] v0.1.2: 💪 Add a SmartBot class
 
-    - Add a SmartBot class
-    - Enhanced `markdown` bot class
-    - Add a txt file for SmartBot testing `File` type
-    - Add empty message verify for Text and Markdown
-    - Add a new markdown test unit
-    - Fully test SmartBot class
-- [x] v1.0.0: 👍 First FULL capacity stable version release.Fix bugs and so on.
-- [x] v1.0.1: 🐛 Fix some bugs and fulfill coverage.
-- [x] v1.0.2: 🆕 Add `Markdown_v2` type support.
-- [x] v1.0.3: 🐛 Fix `Markdown_v2` attribute `markdown_feature` to class method.
-- [x] v1.0.4: 📝 Add content into README.md
 

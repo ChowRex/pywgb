@@ -1,11 +1,57 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Abstract bot classes
+Abstract base classes for Wecom Group Bot implementations.
 
-- Author: Rex Zhou <879582094@qq.com>
-- Created Time: 2025/6/6 09:01
-- Copyright: Copyright © 2025 Rex Zhou. All rights reserved.
+This module provides the foundational abstract classes that all bot types
+inherit from. It defines the common interface, webhook URL handling, API
+communication, and media upload functionality.
+
+Classes:
+    - :class:`_Basic`: Base class with webhook URL parsing and validation
+    - :class:`_MediaUploader`: Handles temporary media file uploads
+    - :class:`AbstractBot`: Main abstract class for all bot implementations
+
+Type Aliases:
+    - ``FilePathLike``: Union[str, PathLike] for file path parameters
+    - ``ConvertedData``: Tuple[Tuple[Dict[str, str]], Dict[str, str]] for converted message data
+
+Architecture:
+    All bot classes follow this inheritance hierarchy::
+    
+        _Basic
+          ├── _MediaUploader (for file/voice uploads)
+          └── AbstractBot (main bot interface)
+                ├── TextBot
+                ├── MarkdownBot
+                ├── ImageBot
+                ├── VoiceBot
+                ├── FileBot
+                ├── NewsBot
+                ├── TextCardBot
+                ├── NewsCardBot
+                └── SmartBot
+
+Example:
+    Creating a custom bot (advanced usage)::
+
+        from pywgb.bot._abstract import AbstractBot, ConvertedData
+        
+        class CustomBot(AbstractBot):
+            @property
+            def _doc_key(self) -> str:
+                return "custom-type"
+            
+            def _verify_arguments(self, *args, **kwargs) -> None:
+                # Validation logic
+                pass
+            
+            def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
+                # Conversion logic
+                return ({"msgtype": "text", "text": {"content": "..."}},), kwargs
+
+:author: Rex Zhou <879582094@qq.com>
+:copyright: Copyright © 2025 Rex Zhou. All rights reserved.
 """
 __all__ = ["AbstractBot", "FilePathLike", "ConvertedData"]
 
@@ -29,12 +75,36 @@ ConvertedData = Tuple[Tuple[Dict[str, str]], Dict[str, str]]
 
 
 class _Basic(ABC):
-    """Private bot basic class"""
+    """
+    Base class for all Wecom Group Bot implementations.
+
+    Provides core functionality for webhook URL parsing, UUID validation,
+    and API endpoint management. This class is not meant to be instantiated
+    directly.
+
+    Attributes:
+        _DOC_URL (str): Base URL for Wecom API documentation
+        _API_BASE_URL (str): Base URL for Wecom API endpoints
+        key (str): Validated webhook key (UUID format)
+        _session (Session): Requests session for API calls
+
+    Args:
+        key (str): Webhook key or full webhook URL. Accepts:
+            - UUID string: ``"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"``
+            - Full URL: ``"https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=UUID"``
+
+    Raises:
+        ValueError: If key format is invalid or missing.
+
+    Note:
+        This is an internal base class. Use concrete bot classes like
+        :class:`TextBot`, :class:`ImageBot`, etc. instead.
+    """
 
     # The base path of the document
     _DOC_URL: str = "https://developer.work.weixin.qq.com/document/path/99110"
     # API Endpoint base url
-    _API_BASE_URL: str = 'https://qyapi.weixin.qq.com'
+    _API_BASE_URL: str = "https://qyapi.weixin.qq.com"
 
     def __init__(self, key: str) -> None:
         """
@@ -131,7 +201,30 @@ class _Basic(ABC):
 
 
 class _MediaUploader(_Basic):
-    """Upload voice and file class"""
+    """
+    Media file uploader for voice and file messages.
+
+    Handles uploading files to Wecom's temporary media storage. Uploaded
+    files receive a media_id that remains valid for 3 days.
+
+    Supported file types:
+        - Voice: AMR format (``file_type="voice"``)
+        - File: Any other format (``file_type="file"``)
+
+    Args:
+        key (str): Webhook key or full webhook URL.
+
+    Example:
+        Direct usage (typically used internally)::
+
+            uploader = _MediaUploader("your-key")
+            media_id = uploader.upload("document.pdf")
+            print(f"Media ID: {media_id}")  # Valid for 3 days
+
+    Note:
+        This class is used internally by :class:`VoiceBot` and :class:`FileBot`.
+        Most users should use those classes instead of calling this directly.
+    """
 
     @property
     def _api_path(self) -> str:
@@ -157,13 +250,7 @@ class _MediaUploader(_Basic):
         :param file_type: File type.
         :return:
         """
-        kwargs = {
-            "url": self._api_url,
-            "params": {
-                "key": self.key,
-                "type": file_type
-            }
-        }
+        kwargs = {"url": self._api_url, "params": {"key": self.key, "type": file_type}}
         cmd = partial(self._session.post, **kwargs)
         with open(file_path, "rb") as files:
             response = cmd(files={"media": files})
@@ -192,18 +279,81 @@ class _MediaUploader(_Basic):
 
 
 class AbstractBot(_Basic, ABC):
-    """Abstract class of Wecom group bot."""
+    """
+    Abstract base class for all Wecom Group Bot implementations.
+
+    Defines the common interface that all bot types must implement. Provides
+    the core ``send()`` method, media upload functionality, and overheat
+    detection (rate limiting).
+
+    All concrete bot classes (TextBot, ImageBot, etc.) inherit from this
+    class and must implement:
+        - ``_doc_key`` property: Documentation reference key
+        - ``_verify_arguments()``: Argument validation logic
+        - ``_convert_arguments()``: Message format conversion logic
+
+    Attributes:
+        _HEADERS (dict): Default HTTP headers for API requests
+        _uploader (_MediaUploader): Media file uploader instance
+        _overheat (int): Instance-level overheat counter for rate limiting
+
+    Args:
+        key (str): Webhook key or full webhook URL.
+
+    Example:
+        Using concrete implementations::
+
+            from pywgb.bot import TextBot, ImageBot
+            
+            # Text message
+            text_bot = TextBot("your-key")
+            text_bot.send("Hello, World!")
+            
+            # Image message
+            image_bot = ImageBot("your-key")
+            image_bot.send(file_path="screenshot.png")
+
+        Implementing a custom bot::
+
+            class MyCustomBot(AbstractBot):
+                @property
+                def _doc_key(self) -> str:
+                    return "custom-message-type"
+                
+                def _verify_arguments(self, *args, **kwargs) -> None:
+                    if not args:
+                        raise ValueError("Message required")
+                
+                def _convert_arguments(self, *args, **kwargs) -> ConvertedData:
+                    return ({"msgtype": "text", "text": {"content": args[0]}},), kwargs
+
+    See Also:
+        - :class:`TextBot`: Plain text messages
+        - :class:`MarkdownBot`: Markdown formatted messages
+        - :class:`ImageBot`: Image messages
+        - :class:`VoiceBot`: Voice messages
+        - :class:`FileBot`: File attachments
+        - :class:`NewsBot`: News articles
+        - :class:`TextCardBot`: Text template cards
+        - :class:`NewsCardBot`: News template cards
+        - :class:`SmartBot`: Automatic type detection
+
+    Note:
+        - Rate limit: 20 messages per minute (enforced by ``@detect_overheat``)
+        - Overheat counter is instance-level for thread safety
+        - All API errors are handled by ``@handle_request_exception``
+    """
 
     # Default requests headers
     _HEADERS: dict = {"Content-Type": "application/json"}
-    # Class level variable for detect overheat
-    _OVERHEAT: int = -1
 
     def __init__(self, key: str) -> None:
         _Basic.__init__(self, key)
         ABC.__init__(self)
         self._session.headers = self._HEADERS
         self._uploader: _MediaUploader = _MediaUploader(key)
+        # Instance-level overheat counter for thread-safety
+        self._overheat: int = -1
 
     @property
     def _api_path(self) -> str:
@@ -225,12 +375,14 @@ class AbstractBot(_Basic, ABC):
     @handle_request_exception
     @detect_overheat
     @verify_and_convert_arguments
-    def send(self,
-             msg: str = None,
-             /,
-             articles: List[Dict[str, str]] = None,
-             file_path: FilePathLike = None,
-             **kwargs) -> dict:
+    def send(
+        self,
+        msg: str = None,
+        /,
+        articles: List[Dict[str, str]] = None,
+        file_path: FilePathLike = None,
+        **kwargs,
+    ) -> dict:
         """
         Method of sending a message. `Refer`_
 
@@ -247,9 +399,7 @@ class AbstractBot(_Basic, ABC):
         logger.debug("File path: %s", file_path)
         logger.debug("Other kwargs: %s", kwargs)
         logger.debug("API endpoint URL: %s", self._api_url)
-        response = self._session.post(self._api_url,
-                                      params={"key": self.key},
-                                      json=msg)
+        response = self._session.post(self._api_url, params={"key": self.key}, json=msg)
         result = response.json()
         logger.debug("~~~~ %s ~~~~", self.send.__name__)
         logger.info("Message has been sent: %s", result)

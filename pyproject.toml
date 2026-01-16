@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pywgb"
-version = "1.0.4"
+version = "1.0.5"
 authors = [
     { name="Rex Zhou", email="879582094@qq.com" },
 ]
@@ -36,6 +36,10 @@ test = [
 build = [
     "build",
     "twine",
+]
+docs = [
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=2.0.0",
 ]
 
 [project.urls]

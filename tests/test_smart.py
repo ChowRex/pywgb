@@ -34,7 +34,11 @@ def test_initial() -> None:
     """
     # Verify valid key and url
     bot = SmartBot(VALID_KEY)
-    assert urlparse(unquote(bot.doc)).fragment == bot._doc_key  # pylint: disable=protected-access
+    assert (
+        # pylint: disable=protected-access
+        urlparse(unquote(bot.doc)).fragment
+        == bot._doc_key
+    )
     assert VALID_KEY == bot.key
 
 
@@ -47,31 +51,28 @@ def test_send() -> None:
     image = Path(__file__).with_name("test.png")
     file = Path(__file__).with_name("test.txt")
     voice = Path(__file__).with_name("test.amr")
+    # Pure V2 markdown without V1 color features
+    pure_v2_markdown = """
+# Pure V2 Test
+
+*Italics text*
+
+| Column A | Column B |
+|----------|----------|
+| Value 1  | Value 2  |
+"""
     tests = {
         "text": ((text,), {}),
-        "text_with_mention": ((text,), {
-            "mentioned_list": ["@all"]
-        }),
+        "text_with_mention": ((text,), {"mentioned_list": ["@all"]}),
         "markdown": ((TEST_VALID_MARKDOWN,), {}),
         "markdown_v2": ((TEST_VALID_MARKDOWN_V2,), {}),
-        "news": ((), {
-            "articles": TEST_VALID_ARTICLES
-        }),
-        "image": ((), {
-            "file_path": image
-        }),
-        "file": ((), {
-            "file_path": file
-        }),
-        "voice": ((), {
-            "file_path": voice
-        }),
-        "text_card": ((), {
-            **TEST_VALID_TEXT_CARD
-        }),
-        "news_card": ((), {
-            **TEST_VALID_NEWS_CARD
-        }),
+        "markdown_v2_pure": ((pure_v2_markdown,), {}),
+        "news": ((), {"articles": TEST_VALID_ARTICLES}),
+        "image": ((), {"file_path": image}),
+        "file": ((), {"file_path": file}),
+        "voice": ((), {"file_path": voice}),
+        "text_card": ((), {**TEST_VALID_TEXT_CARD}),
+        "news_card": ((), {**TEST_VALID_NEWS_CARD}),
     }
     bot = SmartBot(VALID_KEY)
     print(bot)

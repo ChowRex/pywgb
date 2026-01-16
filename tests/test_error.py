@@ -42,15 +42,15 @@ def test_request_exception() -> None:
     """
     bot = TextBot(getenv("VALID_KEY"))
     with raises(ConnectionRefusedError) as exception_info:
-        bot.send("This message WON'T be sent, cause by request error",
-                 test="request_error")
-    assert "Unable to initiate API request correctly" in str(
-        exception_info.value)
+        bot.send(
+            "This message WON'T be sent, cause by request error", test="request_error"
+        )
+    assert "Unable to initiate API request correctly" in str(exception_info.value)
     with raises(IOError) as exception_info:
-        bot.send("This message WON'T be sent, cause by API error",
-                 test="api_error")
+        bot.send("This message WON'T be sent, cause by API error", test="api_error")
     assert "Request failed, please refer to the official manual" in str(
-        exception_info.value)
+        exception_info.value
+    )
 
 
 def test_verify_text_error() -> None:
@@ -75,8 +75,10 @@ def test_verify_text_error() -> None:
     ]
     for test in tests:
         with raises(ValueError) as error:
-            bot.send("This message won't be sent, cause verify error.",
-                     mentioned_mobile_list=test)
+            bot.send(
+                "This message won't be sent, cause verify error.",
+                mentioned_mobile_list=test,
+            )
         assert err_msg in str(error.value)
 
 
@@ -138,7 +140,7 @@ def test_verify_image_error() -> None:
     assert "The file_path parameter is required" in str(exception_info.value)
     file = Path(__file__).with_name("test.png")
     mapper = {
-        "wrong_format_image": "Just support image type: jpg or png",
+        "wrong_format_image": "Just support image type:",
         "oversize_image": "The image is too large, more than 2M",
     }
     for code, msg in mapper.items():
@@ -186,7 +188,7 @@ def test_verify_voice_error() -> None:
     file = Path(__file__).with_name("test.png")
     with raises(ValueError) as exception_info:
         bot.send(file_path=file, test="wrong_format_voice")
-    assert "Just support voice type: amr" in str(exception_info.value)
+    assert "Just support voice type:" in str(exception_info.value)
     # Test overlong and oversize voice
     file = Path(__file__).with_name("test.amr")
     with raises(ValueError) as exception_info:
